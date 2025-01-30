@@ -130,6 +130,9 @@
         function calculateSimilarity() {
             let current = document.getElementById("current").value;
             let candidate = document.getElementById("candidate").value;
+            document.getElementById("cosineResult").textContent = "";
+            document.getElementById("levenshteinResult").textContent = "";
+            document.getElementById("result").textContent = "";
             if (!current || !candidate) {
                 document.getElementById("result").textContent = "Please enter both passwords. Each password should be at least 8 characters.";
                 return;
@@ -148,17 +151,18 @@
 
         function addTestCases() {
             let testCases = [
+                ['abc123', 'r5g9dkv%'],
+                ['abc123', '123abc'],
+                ['abc123', '321cba'],
+                ['abc123', 'abd1245'],
                 ['abc123', 'abd124'],
                 ['abc123', 'Abg123'],
-                ['abc123', '@bc123'],
-                ['abc123', '123abc'],
                 ['abc123', 'a1b2c3'],
+                ['abc123', '@bc123'],
                 ['abc123', 'z9x5c6'],
-                ['abc123', 'abd1245'],
                 ['abc123', '1abc123'],
-                ['abc123', 'r5g9dkv%'],
-                ['abc123', 'acb123'],
-                ['abc123', '321cba']
+                ['abc123', 'acb123']
+                
             ];
 
             let tableBody = document.getElementById("testCases");
