@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hybrid Similarity Score Demo</title>
-    <script src="https://cdn.jsdelivr.net/npm/damerau-levenshtein"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        input, button { margin: 10px 0; padding: 8px; }
-        #result { font-weight: bold; }
+        body{font-family:Arial,sans-serif;padding:20px;margin:0;}input,button{margin:10px 0;padding:8px;width:100%;max-width:400px;box-sizing:border-box;}#result,#cosineResult,#levenshteinResult{font-weight:bold;word-wrap:break-word;}.table-container{width:100%;overflow-x:auto;}table{border-collapse:collapse;width:100%;min-width:600px;margin-top:20px;white-space:nowrap;}th,td{border:1px solid black;padding:8px;text-align:center;font-size:14px;}th{background-color:#dff0d9;}button{background-color:#007bff;color:white;padding:10px 16px;border:none;border-radius:5px;cursor:pointer;font-size:16px;transition:background-color 0.3s ease-in-out,transform 0.2s ease;}button:hover{background-color:#0056b3;}button:active{background-color:#004494;transform:scale(0.95);}.formula-container{background-color:#f8f9fa;border-left:5px solid #007bff;padding:15px;margin:20px 0;border-radius:8px;box-shadow:2px 2px 10px rgba(0,0,0,0.1);}.formula-containerh3{color:#007bff;margin-top:0;}.formula-container p{font-size:16px;line-height:1.6;}.formula-container ul{padding-left:20px;}.formula-container li{margin-bottom:8px;}a{color:#0056b3;text-decoration:underline;}a:hover{text-decoration:none;color:#003d82;}.formula{font-size:18px!important;font-weight:bold;font-family:'TimesNewRoman',Times,serif;text-align:center;padding:10px 0;}
+        @mediascreenand(max-width:600px){th,td{font-size:12px;padding:6px;}input,button{font-size:14px;}}
     </style>
 </head>
 <body>
@@ -20,8 +18,33 @@
     <input type="text" id="candidate" placeholder="Enter candidate password">
     <br>
     <button onclick="calculateSimilarity()">Compute Similarity</button>
+    <p id="cosineResult"></p>
+    <p id="levenshteinResult"></p>
     <p id="result"></p>
-
+    <br />
+    <div class="formula-container">
+        <h3>Hybrid Similarity Formula:</h3>
+        <p class="formula">Hybrid Similarity = (w<sub>1</sub> × Cosine Similarity) + (w<sub>2</sub> × Damerau-Levenshtein Similarity)</p>
+        <ul>
+            <li> The Damerau-Levenshtein Distance JS function is based on Python's <code>`textdistance`</code> restricted Damerau-Levenshtein. <a href="https://github.com/life4/textdistance/blob/master/textdistance/algorithms/edit_based.py#L142">Reference</a></li>
+            <li> The Cosine Similarity JS function is customized for character frequency based on Python's <code>`scipy.spatial.distance`</code>.</li>
+            <li> w<sub>1</sub> and w<sub>2</sub> are currently set to <code>0.5</code></li>
+        </ul>
+    </div>
+    <h6><a href="https://github.com/erikathea/credtwk-similarityscore">Source Code</a></h6>
+    <br/>
+    <h3>Example Test Cases:</h3>
+    <table>
+        <tr>
+            <th>Current Password</th>
+            <th>Candidate Password</th>
+            <th>Cosine Similarity</th>
+            <th>Damerau-Levenshtein Similarity</th>
+            <th>Hybrid Similarity</th>
+        </tr>
+        <tbody id="testCases"></tbody>
+    </table>
+    
     <script>
         function charFrequencyVector(str) {
             let charMap = {};
@@ -48,8 +71,34 @@
             return dotProduct / (Math.sqrt(mag1) * Math.sqrt(mag2));
         }
 
+        function damerauLevenshteinDistance(s1, s2) {
+            let len1 = s1.length;
+            let len2 = s2.length;
+            let d = Array.from({ length: len1 + 1 }, () => Array(len2 + 1).fill(0));
+            
+            for (let i = 0; i <= len1; i++) d[i][0] = i;
+            for (let j = 0; j <= len2; j++) d[0][j] = j;
+            
+            for (let i = 1; i <= len1; i++) {
+                for (let j = 1; j <= len2; j++) {
+                    let cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
+                    d[i][j] = Math.min(
+                        d[i - 1][j] + 1,     // Deletion
+                        d[i][j - 1] + 1,     // Insertion
+                        d[i - 1][j - 1] + cost  // Substitution
+                    );
+                    
+                    // Transposition (Restricted)
+                    if (i > 1 && j > 1 && s1[i - 1] === s2[j - 2] && s1[i - 2] === s2[j - 1]) {
+                        d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + cost);
+                    }
+                }
+            }
+            return d[len1][len2];
+        }
+
         function damerauLevenshteinSimilarity(str1, str2) {
-            let distance = damerauLevenshtein(str1, str2).steps;
+            let distance = damerauLevenshteinDistance(str1, str2);
             let maxLen = Math.max(str1.length, str2.length);
             return 1 - (distance / maxLen);
         }
@@ -67,9 +116,50 @@
                 document.getElementById("result").textContent = "Please enter both passwords.";
                 return;
             }
+            let cosineScore = cosineSimilarity(current, candidate).toFixed(4);
+            let levenshteinScore = damerauLevenshteinSimilarity(current, candidate).toFixed(4);
             let similarityScore = hybridSimilarity(current, candidate).toFixed(4);
+            
+            document.getElementById("cosineResult").textContent = `Cosine Similarity Score: ${cosineScore}`;
+            document.getElementById("levenshteinResult").textContent = `Damerau-Levenshtein Similarity Score: ${levenshteinScore}`;
             document.getElementById("result").textContent = `Hybrid Similarity Score: ${similarityScore}`;
         }
+
+        function addTestCases() {
+            let testCases = [
+                ['abc123', 'abd124'],
+                ['abc123', 'Abg123'],
+                ['abc123', '@bc123'],
+                ['abc123', '123abc'],
+                ['abc123', 'a1b2c3'],
+                ['abc123', 'z9x5c6'],
+                ['abc123', 'abd1245'],
+                ['abc123', '1abc123'],
+                ['abc123', 'r5g9dkv%'],
+                ['abc123', 'acb123'],
+                ['abc123', '321cba']
+            ];
+
+            let tableBody = document.getElementById("testCases");
+            tableBody.innerHTML = "";
+
+            testCases.forEach(([str1, str2]) => {
+                let cosine = cosineSimilarity(str1, str2).toFixed(4);
+                let levenshtein = damerauLevenshteinSimilarity(str1, str2).toFixed(4);
+                let hybrid = hybridSimilarity(str1, str2).toFixed(4);
+
+                let row = `<tr>
+                    <td>${str1}</td>
+                    <td>${str2}</td>
+                    <td>${cosine}</td>
+                    <td>${levenshtein}</td>
+                    <td>${hybrid}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        window.onload = addTestCases;
     </script>
 </body>
 </html>
