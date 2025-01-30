@@ -5,22 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hybrid Similarity Score Demo</title>
     <style>
-        body{font-family:Arial,sans-serif;padding:20px;margin:0;}input,button{margin:10px 0;padding:8px;width:100%;max-width:400px;box-sizing:border-box;}#result,#cosineResult,#levenshteinResult{font-weight:bold;word-wrap:break-word;}.table-container{width:100%;overflow-x:auto;}table{border-collapse:collapse;width:100%;min-width:600px;margin-top:20px;white-space:nowrap;}th,td{border:1px solid black;padding:8px;text-align:center;font-size:14px;}th{background-color:#dff0d9;}button{background-color:#007bff;color:white;padding:10px 16px;border:none;border-radius:5px;cursor:pointer;font-size:16px;transition:background-color 0.3s ease-in-out,transform 0.2s ease;}button:hover{background-color:#0056b3;}button:active{background-color:#004494;transform:scale(0.95);}.formula-container{background-color:#f8f9fa;border-left:5px solid #007bff;padding:15px;margin:20px 0;border-radius:8px;box-shadow:2px 2px 10px rgba(0,0,0,0.1);}.formula-containerh3{color:#007bff;margin-top:0;}.formula-container p{font-size:16px;line-height:1.6;}.formula-container ul{padding-left:20px;}.formula-container li{margin-bottom:8px;}a{color:#0056b3;text-decoration:underline;}a:hover{text-decoration:none;color:#003d82;}.formula{font-size:18px!important;font-weight:bold;font-family:'TimesNewRoman',Times,serif;text-align:center;padding:10px 0;}
+        body{font-family:Arial,sans-serif;padding:20px;margin:0;}input,button{margin:10px 0;padding:8px;width:100%;max-width:400px;box-sizing:border-box;}#current-strength,#candidate-strength{margin:10px 0;padding:4px;width:100%;max-width:400px;box-sizing:border-box;}#result,#cosineResult,#levenshteinResult{font-weight:bold;word-wrap:break-word;}.table-container{width:100%;overflow-x:auto;}table{border-collapse:collapse;width:100%;min-width:600px;margin-top:20px;white-space:nowrap;}th,td{border:1px solid black;padding:8px;text-align:center;font-size:14px;}th{background-color:#dff0d9;}button{background-color:#007bff;color:white;padding:10px 16px;border:none;border-radius:5px;cursor:pointer;font-size:16px;transition:background-color 0.3s ease-in-out,transform 0.2s ease;}button:hover{background-color:#0056b3;}button:active{background-color:#004494;transform:scale(0.95);}.formula-container{background-color:#f8f9fa;border-left:5px solid #007bff;padding:15px;margin:20px 0;border-radius:8px;box-shadow:2px 2px 10px rgba(0,0,0,0.1);}.formula-container h3{color:#007bff;margin-top:0;}.formula-container p{font-size:16px;line-height:1.6;}.formula-container ul{padding-left:20px;}.formula-container li{margin-bottom:8px;}a{color:#0056b3;text-decoration:underline;}a:hover{text-decoration:none;color:#003d82;}.formula{font-size:18px!important;font-weight:bold;font-family:'TimesNewRoman',Times,serif;text-align:center;padding:10px 0;}input[type="checkbox"] {margin-top:5px;width:auto;}
         @mediascreenand(max-width:600px){th,td{font-size:12px;padding:6px;}input,button{font-size:14px;}}
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@zxcvbn-ts/core@2.0.0/dist/zxcvbn-ts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@zxcvbn-ts/language-common@2.0.0/dist/zxcvbn-ts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@zxcvbn-ts/language-en@2.0.0/dist/zxcvbn-ts.js"></script>
 </head>
 <body>
-    <h2>Hybrid Similarity Score Calculator</h2>
-    <label for="current">Current Password:</label>
-    <input type="text" id="current" placeholder="Enter current password">
-    <br>
-    <label for="candidate">Candidate Password:</label>
-    <input type="text" id="candidate" placeholder="Enter candidate password">
-    <br>
-    <button onclick="calculateSimilarity()">Compute Similarity</button>
-    <p id="cosineResult"></p>
-    <p id="levenshteinResult"></p>
-    <p id="result"></p>
+    <form onsubmit="calculateSimilarity(); return false;">
+        <h2>Hybrid Similarity Score Calculator</h2>
+        <h4>Password Strength Meter (PSM): zxcvbn-ts</h4>
+        <div class="password-container">
+            <label for="current">Current Password:</label>
+            <input type="password" minlength="8" maxlength="64" id="current" placeholder="Enter current password" oninput="updateStrength('current')">
+            <input type="checkbox" id="toggleCurrent" onclick="togglePassword('current')">
+            <label for="toggleCurrent">Show Password</label>
+            <div id="current-strength" class="strength-meter"></div>
+        </div>
+
+        <div class="password-container">
+            <label for="candidate">Candidate Password:</label>
+            <input type="password" minlength="8" maxlength="64" id="candidate" placeholder="Enter candidate password" oninput="updateStrength('candidate')">
+            <input type="checkbox" id="toggleCandidate" onclick="togglePassword('candidate')">
+            <label for="toggleCandidate">Show Password</label>
+            <div id="candidate-strength" class="strength-meter"></div>
+        </div>
+
+        <button type="submit">Compute Similarity</button>
+        <p id="cosineResult"></p>
+        <p id="levenshteinResult"></p>
+        <p id="result"></p>
+    </form>
     <br />
     <div class="formula-container">
         <h3>Hybrid Similarity Formula:</h3>
@@ -113,7 +129,7 @@
             let current = document.getElementById("current").value;
             let candidate = document.getElementById("candidate").value;
             if (!current || !candidate) {
-                document.getElementById("result").textContent = "Please enter both passwords.";
+                document.getElementById("result").textContent = "Please enter both passwords. Each password should be at least 8 characters.";
                 return;
             }
             let cosineScore = cosineSimilarity(current, candidate).toFixed(4);
@@ -160,6 +176,77 @@
         }
 
         window.onload = addTestCases;
+
+        async function checkHIBP(password) {
+            const sha1Hash = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(password));
+            const hashHex = Array.from(new Uint8Array(sha1Hash))
+                .map(b => b.toString(16).padStart(2, "0"))
+                .join("")
+                .toUpperCase();
+            const prefix = hashHex.slice(0, 5);
+            const suffix = hashHex.slice(5);
+
+            // Fetch pwned hashes from Have I Been Pwned API
+            const response = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
+            const hashes = await response.text();
+
+            const hashLines = hashes.split("\n");
+            for (const line of hashLines) {
+                const [hashSuffix, count] = line.split(":");
+                if (hashSuffix.trim() === suffix) {
+                    return parseInt(count, 10);
+                }
+            }
+
+            return 0; 
+        }
+
+
+        async function updateStrength(inputId) {
+            let password = document.getElementById(inputId).value;
+            let strengthMeter = document.getElementById(inputId + "-strength");
+
+            if (password.length < 8) {
+                strengthMeter.innerHTML = "";
+                return;
+            }
+
+            let result = zxcvbnts.core.zxcvbn(password);
+            console.log(result);
+            let score = result.score;
+            let feedback = result.feedback.suggestions.join(" ") || "Strong password!";
+
+            let strengthLevels = ["Very Weak", "Weak", "Fair", "Good", "Strong"];
+            let colors = ["#ff4d4d", "#ff9933", "#ffcc00", "#99cc33", "#33cc33"];
+
+            strengthMeter.innerHTML = `<strong style="color: ${colors[score]};">${strengthLevels[score]}</strong> - ${feedback}`;
+
+            // Check if password is pwned
+            let pwnedCount = await checkHIBP(password);
+            if (pwnedCount > 0) {
+                strengthMeter.innerHTML = `<span style="color: red;">⚠️ This password has been compromised in ${pwnedCount} breaches!</span>`;
+            }
+        }
+
+        function togglePassword(inputId) {
+            let input = document.getElementById(inputId);
+            input.type = input.type === "password" ? "text" : "password";
+        }
+
+        (async function () {
+            const options = {
+              translations: zxcvbnts['language-en'].translations,
+              graphs: zxcvbnts['language-common'].adjacencyGraphs,
+              dictionary: {
+                ...zxcvbnts['language-common'].dictionary,
+                ...zxcvbnts['language-en'].dictionary,
+              },
+              useLevenshteinDistance: true,
+            }
+            zxcvbnts.core.zxcvbnOptions.setOptions(options);
+            console.log(zxcvbnts.core.zxcvbn('fbobh_0ir4'));
+        })()
+
     </script>
 </body>
 </html>
