@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Similarity Score Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/damerau-levenshtein"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        input, button { margin: 10px 0; padding: 8px; }
+        #result { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Hybrid Similarity Score Calculator</h2>
+    <label for="current">Current Password:</label>
+    <input type="text" id="current" placeholder="Enter current password">
+    <br>
+    <label for="candidate">Candidate Password:</label>
+    <input type="text" id="candidate" placeholder="Enter candidate password">
+    <br>
+    <button onclick="calculateSimilarity()">Compute Similarity</button>
+    <p id="result"></p>
+
+    <script>
+        function charFrequencyVector(str) {
+            let charMap = {};
+            for (let char of str) {
+                charMap[char] = (charMap[char] || 0) + 1;
+            }
+            return charMap;
+        }
+
+        function cosineSimilarity(str1, str2) {
+            let vec1 = charFrequencyVector(str1);
+            let vec2 = charFrequencyVector(str2);
+            let uniqueChars = new Set([...Object.keys(vec1), ...Object.keys(vec2)]);
+            let dotProduct = 0, mag1 = 0, mag2 = 0;
+            
+            uniqueChars.forEach(char => {
+                let v1 = vec1[char] || 0;
+                let v2 = vec2[char] || 0;
+                dotProduct += v1 * v2;
+                mag1 += v1 * v1;
+                mag2 += v2 * v2;
+            });
+            
+            return dotProduct / (Math.sqrt(mag1) * Math.sqrt(mag2));
+        }
+
+        function damerauLevenshteinSimilarity(str1, str2) {
+            let distance = damerauLevenshtein(str1, str2).steps;
+            let maxLen = Math.max(str1.length, str2.length);
+            return 1 - (distance / maxLen);
+        }
+
+        function hybridSimilarity(str1, str2, w1 = 0.5, w2 = 0.5) {
+            let freqSimilarity = cosineSimilarity(str1, str2);
+            let orderSimilarity = damerauLevenshteinSimilarity(str1, str2);
+            return (w1 * freqSimilarity) + (w2 * orderSimilarity);
+        }
+
+        function calculateSimilarity() {
+            let current = document.getElementById("current").value;
+            let candidate = document.getElementById("candidate").value;
+            if (!current || !candidate) {
+                document.getElementById("result").textContent = "Please enter both passwords.";
+                return;
+            }
+            let similarityScore = hybridSimilarity(current, candidate).toFixed(4);
+            document.getElementById("result").textContent = `Hybrid Similarity Score: ${similarityScore}`;
+        }
+    </script>
+</body>
+</html>
