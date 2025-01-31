@@ -42,7 +42,7 @@
         <h3>Hybrid Similarity Formula:</h3>
         <p class="formula">Hybrid Similarity = (w<sub>1</sub> × Cosine Similarity) + (w<sub>2</sub> × Damerau-Levenshtein Similarity)</p>
         <ul>
-            <li> The Damerau-Levenshtein Distance JS function is based on Python's <code>`textdistance`</code> restricted Damerau-Levenshtein. <a href="https://github.com/life4/textdistance/blob/master/textdistance/algorithms/edit_based.py#L142">Reference</a></li>
+            <li> The Damerau-Levenshtein Distance JS function is based on Python's <code>`textdistance`</code> restricted Damerau-Levenshtein OSA (Optimal String Alignment). <a href="https://github.com/life4/textdistance/blob/master/textdistance/algorithms/edit_based.py#L142">Reference</a></li>
             <li> The Cosine Similarity JS function is customized for character frequency based on Python's <code>`scipy.spatial.distance`</code>.</li>
             <li>w<sub>1</sub> and w<sub>2</sub> are currently set to <code>0.5</code></li>
             <li><strong>Hybrid Similarity Score Threshold:</strong> A similarity score of <strong>0.50 or higher</strong> means that the candidate password is too similar to the current password. Using a highly similar password increases the risk of credential tweaking attacks, where attackers guess variations of your old password.</li>
