@@ -161,7 +161,17 @@
                 ['abc123', '@bc123'],
                 ['abc123', 'z9x5c6'],
                 ['abc123', '1abc123'],
-                ['abc123', 'acb123']
+                ['abc123', 'acb123'],
+                ['Passw0rd1', 'Passw0rd2'],
+                ['Qwerty1234', 'Qwerty12345'],
+                ['!SecurePass!', '!SecureP@ss!'],
+                ['LongerPasswordHere123', 'LongerPasswordHere321'],
+                ['abcdefgh12345678', 'abcdefgh87654321'],
+                ['RandomTextWithSymbols@#$%', 'RandomTextWithSymbols@#$%^'],
+                ['StrongPass123!', 'StrongPass321!'],
+                ['ComplexPassw0rd1234', 'ComplexP@ssw0rd1234'],
+                ['MaxCharacterPassword123456789012345678901234567890123456789012345678901234567890', 'm@xCharacterPassword098765432109876543210987654321098765432109876543210987654321'],
+                ['Shortest8', 'Shortes7']
                 
             ];
 
@@ -174,8 +184,8 @@
                 let hybrid = hybridSimilarity(str1, str2).toFixed(4);
 
                 let row = `<tr>
-                    <td>${str1}</td>
-                    <td>${str2}</td>
+                    <td>${str1.replace(/(.{8})/g, '$1<br/>')}</td>
+                    <td>${str2.replace(/(.{8})/g, '$1<br/>')}</td>
                     <td>${cosine}</td>
                     <td>${levenshtein}</td>
                     <td>${hybrid}</td>
