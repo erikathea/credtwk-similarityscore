@@ -33,6 +33,7 @@
         </div>
 
         <button type="submit">Compute Similarity</button>
+        <input type="checkbox" id="caseInsensitive"> Case Insensitive?
         <p id="cosineResult"></p>
         <p id="levenshteinResult"></p>
         <p id="result"></p>
@@ -128,6 +129,7 @@
         }
 
         function calculateSimilarity() {
+            let caseInsensitive = document.getElementById('caseInsensitive').checked;
             let current = document.getElementById("current").value;
             let candidate = document.getElementById("candidate").value;
             document.getElementById("cosineResult").textContent = "";
@@ -136,6 +138,10 @@
             if (!current || !candidate) {
                 document.getElementById("result").textContent = "Please enter both passwords. Each password should be at least 8 characters.";
                 return;
+            }
+            if (caseInsensitive) {
+                current = current.toLowerCase();
+                candidate = candidate.toLowerCase();
             }
             let cosineScore = cosineSimilarity(current, candidate).toFixed(4);
             let levenshteinScore = damerauLevenshteinSimilarity(current, candidate).toFixed(4);
