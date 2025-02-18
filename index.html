@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hybrid Similarity Score Demo</title>
     <style>
-        body{font-family:Arial,sans-serif;padding:20px;margin:0;}input,button{margin:10px 0;padding:8px;width:100%;max-width:400px;box-sizing:border-box;}#current-strength,#candidate-strength{margin:10px 0;padding:4px;width:100%;max-width:400px;box-sizing:border-box;}#result,#cosineResult,#levenshteinResult{font-weight:bold;word-wrap:break-word;}.table-container{width:100%;overflow-x:auto;}table{border-collapse:collapse;width:100%;min-width:600px;margin-top:20px;white-space:nowrap;}th,td{border:1px solid black;padding:8px;text-align:center;font-size:14px;}th{background-color:#dff0d9;}button{background-color:#007bff;color:white;padding:10px 16px;border:none;border-radius:5px;cursor:pointer;font-size:16px;transition:background-color 0.3s ease-in-out,transform 0.2s ease;}button:hover{background-color:#0056b3;}button:active{background-color:#004494;transform:scale(0.95);}.formula-container{background-color:#f8f9fa;border-left:5px solid #007bff;padding:15px;margin:20px 0;border-radius:8px;box-shadow:2px 2px 10px rgba(0,0,0,0.1);}.formula-container h3{color:#007bff;margin-top:0;}.formula-container p{font-size:16px;line-height:1.6;}.formula-container ul{padding-left:20px;}.formula-container li{margin-bottom:8px;}a{color:#0056b3;text-decoration:underline;}a:hover{text-decoration:none;color:#003d82;}.formula{font-size:18px!important;font-weight:bold;font-family:'TimesNewRoman',Times,serif;text-align:center;padding:10px 0;}input[type="checkbox"] {margin-top:5px;width:auto;}
+        body{font-family:Arial,sans-serif;padding:20px;margin:0;}input,button{margin:10px 0;padding:8px;width:100%;max-width:400px;box-sizing:border-box;}#current-strength,#candidate-strength{margin:10px 0;padding:4px;width:100%;max-width:400px;box-sizing:border-box;}#result,#cosineResult,#levenshteinResult{font-weight:bold;word-wrap:break-word;}.table-container{width:100%;overflow-x:auto;}table{border-collapse:collapse;width:100%;min-width:600px;margin-top:20px;white-space:nowrap;}th,td{border:1px solid black;padding:8px;text-align:center;font-size:14px;}th{background-color:#dff0d9;}button{background-color:#007bff;color:white;padding:10px 16px;border:none;border-radius:5px;cursor:pointer;font-size:16px;transition:background-color 0.3s ease-in-out,transform 0.2s ease;}button:hover{background-color:#0056b3;}button:active{background-color:#004494;transform:scale(0.95);}.formula-container{background-color:#f8f9fa;border-left:5px solid #007bff;padding:15px;margin:20px 0;border-radius:8px;box-shadow:2px 2px 10px rgba(0,0,0,0.1);}.formula-container h3{color:#007bff;margin-top:0;}.formula-container p{font-size:16px;line-height:1.6;}.formula-container ul{padding-left:20px;}.formula-container li{margin-bottom:8px;}a{color:#0056b3;text-decoration:underline;}a:hover{text-decoration:none;color:#003d82;}.formula{font-size:18px!important;font-weight:bold;font-family:'TimesNewRoman',Times,serif;text-align:center;padding:10px 0;}input[type="checkbox"] {margin-top:5px;width:auto;}.toggleable{display: none;}.show-columns .toggleable {display: table-cell;}
         @mediascreenand(max-width:600px){th,td{font-size:12px;padding:6px;}input,button{font-size:14px;}}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@zxcvbn-ts/core@2.0.0/dist/zxcvbn-ts.js"></script>
@@ -53,13 +53,19 @@
     <h6><a href="https://github.com/erikathea/credtwk-similarityscore">Source Code</a></h6>
     <br/>
     <h3>Example Test Cases:</h3>
+    <label>
+        <input type="checkbox" id="toggleColumns" onchange="toggleColumns()"> Show Formula Components?
+    </label>
     <table>
         <tr>
             <th>Current Password</th>
             <th>Candidate Password</th>
-            <th>Cosine Similarity</th>
-            <th>Damerau-Levenshtein Similarity</th>
-            <th>Hybrid Similarity</th>
+            <th>Hybrid Similarity<label>Case Sensitive (CS)</label></th>
+            <th>Hybrid Similarity<label>Case Insensitive (CI)</label></th>
+            <th class='toggleable'>Cosine Similarity (CS)</th>
+            <th class='toggleable'>Cosine Similarity (CI)</th>
+            <th class='toggleable'>Damerau-Levenshtein Similarity (CS)</th>
+            <th class='toggleable'>Damerau-Levenshtein Similarity (CI)</th>
         </tr>
         <tbody id="testCases"></tbody>
     </table>
@@ -168,6 +174,7 @@
                 ['abc123', 'z9x5c6'],
                 ['abc123', '1abc123'],
                 ['abc123', 'acb123'],
+                ['password', 'PASSWORD'],
                 ['Passw0rd1', 'Passw0rd2'],
                 ['Qwerty1234', 'Qwerty12345'],
                 ['!SecurePass!', '!SecureP@ss!'],
@@ -188,19 +195,23 @@
                 let cosine = cosineSimilarity(str1, str2).toFixed(4);
                 let levenshtein = damerauLevenshteinSimilarity(str1, str2).toFixed(4);
                 let hybrid = hybridSimilarity(str1, str2).toFixed(4);
+                let cosine2 = cosineSimilarity(str1.toLowerCase(), str2.toLowerCase()).toFixed(4);
+                let levenshtein2 = damerauLevenshteinSimilarity(str1.toLowerCase(), str2.toLowerCase()).toFixed(4);
+                let hybrid2 = hybridSimilarity(str1.toLowerCase(), str2.toLowerCase()).toFixed(4);
 
                 let row = `<tr>
                     <td>${str1.replace(/(.{8})/g, '$1<br/>')}</td>
                     <td>${str2.replace(/(.{8})/g, '$1<br/>')}</td>
-                    <td>${cosine}</td>
-                    <td>${levenshtein}</td>
                     <td>${hybrid}</td>
+                    <td>${hybrid2}</td>
+                    <td class='toggleable'>${cosine}</td>
+                    <td class='toggleable'>${cosine2}</td>
+                    <td class='toggleable'>${levenshtein}</td>
+                    <td class='toggleable'>${levenshtein2}</td>
                 </tr>`;
                 tableBody.innerHTML += row;
             });
         }
-
-        window.onload = addTestCases;
 
         async function checkHIBP(password) {
             const sha1Hash = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(password));
@@ -257,6 +268,14 @@
             let input = document.getElementById(inputId);
             input.type = input.type === "password" ? "text" : "password";
         }
+
+        function toggleColumns() {
+            document.querySelector('table').classList.toggle('show-columns', document.getElementById('toggleColumns').checked);
+        }
+        window.onload = function() {
+            addTestCases();
+            toggleColumns();
+        };
 
         (async function () {
             const options = {
