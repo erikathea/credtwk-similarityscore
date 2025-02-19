@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hybrid Similarity Score Demo</title>
     <style>
-        body{font-family:Arial,sans-serif;padding:20px;margin:0;}input,button{margin:10px 0;padding:8px;width:100%;max-width:400px;box-sizing:border-box;}#current-strength,#candidate-strength{margin:10px 0;padding:4px;width:100%;max-width:400px;box-sizing:border-box;}#result,#cosineResult,#levenshteinResult{font-weight:bold;word-wrap:break-word;}.table-container{width:100%;overflow-x:auto;}table{border-collapse:collapse;width:100%;min-width:600px;margin-top:20px;white-space:nowrap;}th,td{border:1px solid black;padding:8px;text-align:center;font-size:14px;}th{background-color:#dff0d9;}button{background-color:#007bff;color:white;padding:10px 16px;border:none;border-radius:5px;cursor:pointer;font-size:16px;transition:background-color 0.3s ease-in-out,transform 0.2s ease;}button:hover{background-color:#0056b3;}button:active{background-color:#004494;transform:scale(0.95);}.formula-container{background-color:#f8f9fa;border-left:5px solid #007bff;padding:15px;margin:20px 0;border-radius:8px;box-shadow:2px 2px 10px rgba(0,0,0,0.1);}.formula-container h3{color:#007bff;margin-top:0;}.formula-container p{font-size:16px;line-height:1.6;}.formula-container ul{padding-left:20px;}.formula-container li{margin-bottom:8px;}a{color:#0056b3;text-decoration:underline;}a:hover{text-decoration:none;color:#003d82;}.formula{font-size:18px!important;font-weight:bold;font-family:'TimesNewRoman',Times,serif;text-align:center;padding:10px 0;}input[type="checkbox"] {margin-top:5px;width:auto;}.toggleable{display: none;}.show-columns .toggleable {display: table-cell;}
+        body{font-family:Arial,sans-serif;padding:20px;margin:0;}input,button{margin:10px 0;padding:8px;width:100%;max-width:400px;box-sizing:border-box;}#current-strength,#candidate-strength{margin:10px 0;padding:4px;width:100%;max-width:400px;box-sizing:border-box;}#result,#cosineResult,#levenshteinResult{font-weight:bold;word-wrap:break-word;}.table-container{width:100%;overflow-x:auto;}table{border-collapse:collapse;width:100%;min-width:600px;margin-top:20px;white-space:nowrap;}th,td{border:1px solid black;padding:8px;text-align:center;font-size:14px;}th{background-color:#dff0d9;}button{background-color:#007bff;color:white;padding:10px 16px;border:none;border-radius:5px;cursor:pointer;font-size:16px;transition:background-color 0.3s ease-in-out,transform 0.2s ease;}button:hover{background-color:#0056b3;}button:active{background-color:#004494;transform:scale(0.95);}.formula-container{background-color:#f8f9fa;border-left:5px solid #007bff;padding:15px;margin:20px 0;border-radius:8px;box-shadow:2px 2px 10px rgba(0,0,0,0.1);}.formula-container h3{color:#007bff;margin-top:0;}.formula-container p{font-size:16px;line-height:1.6;}.formula-container ul{padding-left:20px;}.formula-container li{margin-bottom:8px;}a{color:#0056b3;text-decoration:underline;}a:hover{text-decoration:none;color:#003d82;}.formula{font-size:18px!important;font-weight:bold;font-family:'TimesNewRoman',Times,serif;text-align:center;padding:10px 0;}input[type="checkbox"] {margin-top:5px;width:auto;}.toggleable{display:none;}.show-columns .toggleable {display:table-cell;} nav{background-color:#007bff;padding:10px;text-align:center;position:sticky;top:0;width:100%;z-index:1000;}nav ul{list-style-type:none;padding:0;margin:0;display:flex;justify-content:center;}nav ul li{margin: 0 15px;}nav ul li a{ color:white;text-decoration:none;font-size:18px;font-weight:bold;}nav ul li a:hover{text-decoration:underline;}section{padding:20px;}.banner{background-color:#004494;color:white;text-align:center;padding:20px;}.banner h1{margin:0;font-size:28px;}.banner p{margin:5px 0 0;font-size:16px;}ul#create-account-security-checklist, ul#change-password-security-checklist{list-style:"🔴";list-style-position:inside;font-weight:bold;}li.passed{list-style:"✅";list-style-position:inside;}
         @mediascreenand(max-width:600px){th,td{font-size:12px;padding:6px;}input,button{font-size:14px;}}
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@zxcvbn-ts/core@2.0.0/dist/zxcvbn-ts.js"></script>
@@ -13,35 +13,24 @@
     <script src="https://cdn.jsdelivr.net/npm/@zxcvbn-ts/language-en@2.0.0/dist/zxcvbn-ts.js"></script>
 </head>
 <body>
-    <form onsubmit="calculateSimilarity(); return false;">
-        <h2>Hybrid Similarity Score Calculator</h2>
-        <h4>Password Strength Meter (PSM): zxcvbn-ts | C3 API: <a href="https://haveibeenpwned.com/Passwords">HIBP</a></h4>
-        <div class="password-container">
-            <label for="current">Current Password:</label>
-            <input type="password" minlength="8" maxlength="64" id="current" placeholder="Enter current password" oninput="updateStrength('current')">
-            <input type="checkbox" id="toggleCurrent" onclick="togglePassword('current')">
-            <label for="toggleCurrent">Show Password</label>
-            <div id="current-strength" class="strength-meter"></div>
-        </div>
-
-        <div class="password-container">
-            <label for="candidate">Candidate Password:</label>
-            <input type="password" minlength="8" maxlength="64" id="candidate" placeholder="Enter candidate password" oninput="updateStrength('candidate')">
-            <input type="checkbox" id="toggleCandidate" onclick="togglePassword('candidate')">
-            <label for="toggleCandidate">Show Password</label>
-            <div id="candidate-strength" class="strength-meter"></div>
-        </div>
-
-        <button type="submit">Compute Similarity</button>
-        <input type="checkbox" id="caseInsensitive"> Case Insensitive?
-        <p id="cosineResult"></p>
-        <p id="levenshteinResult"></p>
-        <p id="result"></p>
-    </form>
-    <br />
-    <div class="formula-container">
+    <header class="banner">
+        <h1>A NIST-Compliant Defense Against Credential Attacks: Hybrid Similarity Scoring and AI-Driven Password Variant Modeling</h1>
+        <p>Enhancing password security through password similarity detection</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#definition">Definition</a></li>
+            <li><a href="#calculator">Calculator</a></li>
+            <li><a href="#examples">Examples</a></li>
+            <li><a href="#create-account">Create Account</a></li>
+            <li><a href="#change-password">Change Password</a></li>
+        </ul>
+    </nav>
+    <section id="definition">
         <h3>Hybrid Similarity Formula:</h3>
-        <p class="formula">Hybrid Similarity = (w<sub>1</sub> × Cosine Similarity(pw<sub>1</sub>, pw<sub>2</sub>)) + (w<sub>2</sub> × Damerau-Levenshtein Similarity(pw<sub>1</sub>, pw<sub>2</sub>))</p>
+        <div class="formula-container">
+            <p class="formula">Hybrid Similarity = (w<sub>1</sub> × Cosine Similarity(pw<sub>1</sub>, pw<sub>2</sub>)) + (w<sub>2</sub> × Damerau-Levenshtein Similarity(pw<sub>1</sub>, pw<sub>2</sub>))</p>
+        </div>
         <ul>
             <li> The Damerau-Levenshtein Distance JS function is based on Python's <code>`textdistance`</code> restricted Damerau-Levenshtein OSA (Optimal String Alignment). <a href="https://github.com/life4/textdistance/blob/master/textdistance/algorithms/edit_based.py#L142">Reference</a></li>
             <li> The Cosine Similarity JS function is customized for character frequency based on Python's <code>`scipy.spatial.distance`</code>.</li>
@@ -49,27 +38,101 @@
             <li><strong>Hybrid Similarity Score Threshold:</strong> A similarity score of <strong>0.50 or higher</strong> means that the candidate password is too similar to the current password. Using a highly similar password increases the risk of credential tweaking attacks, where attackers guess variations of your old password.</li>
 
         </ul>
-    </div>
-    <h6><a href="https://github.com/erikathea/credtwk-similarityscore">Source Code</a></h6>
-    <br/>
-    <h3>Example Test Cases:</h3>
-    <label>
-        <input type="checkbox" id="toggleColumns" onchange="toggleColumns()"> Show Formula Components?
-    </label>
-    <table>
-        <tr>
-            <th>Current Password</th>
-            <th>Candidate Password</th>
-            <th>Hybrid Similarity<label>Case Sensitive (CS)</label></th>
-            <th>Hybrid Similarity<label>Case Insensitive (CI)</label></th>
-            <th class='toggleable'>Cosine Similarity (CS)</th>
-            <th class='toggleable'>Cosine Similarity (CI)</th>
-            <th class='toggleable'>Damerau-Levenshtein Similarity (CS)</th>
-            <th class='toggleable'>Damerau-Levenshtein Similarity (CI)</th>
-        </tr>
-        <tbody id="testCases"></tbody>
-    </table>
-    
+        <h6><a href="https://github.com/erikathea/credtwk-similarityscore">Source Code</a></h6>
+    </section>
+    <section id="calculator">
+        <h2>Hybrid Similarity Score Calculator</h2>
+        <h4>Password Strength Meter (PSM): zxcvbn-ts | C3 API: <a href="https://haveibeenpwned.com/Passwords">HIBP</a></h4>
+        <form onsubmit="calculateSimilarity(); return false;">
+            <div class="password-container">
+                <label for="current">Current Password:</label>
+                <input type="password" minlength="8" maxlength="64" id="current" placeholder="Enter current password" oninput="computeStrength('current')">
+                <input type="checkbox" id="toggleCurrent" onclick="togglePassword('current')">
+                <label for="toggleCurrent">Show Password</label>
+                <div id="current-strength" class="strength-meter"></div>
+            </div>
+
+            <div class="password-container">
+                <label for="candidate">Candidate Password:</label>
+                <input type="password" minlength="8" maxlength="64" id="candidate" placeholder="Enter candidate password" oninput="computeStrength('candidate')">
+                <input type="checkbox" id="toggleCandidate" onclick="togglePassword('candidate')">
+                <label for="toggleCandidate">Show Password</label>
+                <div id="candidate-strength" class="strength-meter"></div>
+            </div>
+
+            <button type="submit">Compute Similarity</button>
+            <input type="checkbox" id="caseInsensitive"> Case Insensitive?
+            <p id="cosineResult"></p>
+            <p id="levenshteinResult"></p>
+            <p id="result"></p>
+        </form>
+    </section>
+    <section id="examples">
+        <h3>Example Test Cases:</h3>
+        <label>
+            <input type="checkbox" id="toggleColumns" onchange="toggleColumns()"> Show Formula Components?
+        </label>
+        <table>
+            <tr>
+                <th>Current Password</th>
+                <th>Candidate Password</th>
+                <th>Hybrid Similarity<br/><small>Case Sensitive (CS)</small></th>
+                <th>Hybrid Similarity<br/><small>Case Insensitive (CI)</small></th>
+                <th class='toggleable'>Cosine Similarity<br/><small>Case Sensitive (CS)</small></th>
+                <th class='toggleable'>Cosine Similarity<br/><small>Case Insensitive (CI)</small></th>
+                <th class='toggleable'>Damerau-Levenshtein Similarity<br/><small>Case Sensitive (CS)</small></th>
+                <th class='toggleable'>Damerau-Levenshtein Similarity<br/><small>Case Insensitive (CI)</small></th>
+            </tr>
+            <tbody id="testCases"></tbody>
+        </table>
+    </section>
+    <section id="create-account">
+        <h2>Create Account</h2>
+        <label for="signup-username">Username:</label>
+        <input type="text" id="signup-username">
+        <br/>
+        <label for="signup-email">Email Address:</label>
+        <input type="text" id="signup-email">
+
+        <div class="password-container">
+            <label for="signup-password">Password:</label>
+            <input type="password" minlength="8" maxlength="64" id="signup-password" placeholder="Enter password" oninput="updateStrength('signup-password')">
+            <input type="checkbox" id="toggleSignupPassword" onclick="togglePassword('signup-password')">
+            <label for="toggleSignupPassword">Show Password</label>
+            <div id="signup-password-strength" class="strength-meter"></div>
+        </div>
+        <div class="password-container">
+            <label for="signup-confirm-password">Confirm Password:</label>
+            <input type="password" minlength="8" maxlength="64" id="signup-confirm-password" placeholder="Re-enter password" oninput="updateStrength('signup-confirm-password')">
+            <input type="checkbox" id="toggleSignupConfirmPassword" onclick="togglePassword('signup-confirm-password')">
+            <label for="toggleSignupConfirmPassword">Show Password</label>
+            <div id="signup-confirm-password-strength" class="strength-meter"></div>
+        </div>
+
+        <div class="pw-security-checklist">
+            <h3>Account Creation Security Checklist</h3>
+            <ul id="create-account-security-checklist">
+                <li id="signup-message">Passwords do not match.</li>
+                <li id="signup-check-stuffing">Credential Stuffing Protection: Not checked</li>
+                <li id="signup-check-tweaking">Credential Tweaking Protection: Not checked</li>
+                <li id="signup-check-spraying">Password Spraying Protection: Not checked</li>
+                <li id="signup-check-bruteforce">Brute-force Resistance: Not checked</li>
+            </ul>
+        </div>
+
+        <button onclick="validateSignup()">Sign Up</button>
+    </section>
+
+    <section id="change-password">
+        <h2>Change Password</h2>
+        <label for="current-password">Current Password:</label>
+        <input type="password" id="current-password">
+        <label for="new-password">New Password:</label>
+        <input type="password" id="new-password">
+        <button onclick="validatePasswordChange()">Change Password</button>
+        <p id="change-password-message"></p>
+    </section>
+
     <script>
         function charFrequencyVector(str) {
             let charMap = {};
@@ -134,6 +197,7 @@
             return (w1 * freqSimilarity) + (w2 * orderSimilarity);
         }
 
+        const SIMILARITY_THRESHOLD = 0.5;
         function calculateSimilarity() {
             let caseInsensitive = document.getElementById('caseInsensitive').checked;
             let current = document.getElementById("current").value;
@@ -156,7 +220,7 @@
             document.getElementById("cosineResult").textContent = `Cosine Similarity Score: ${cosineScore}`;
             document.getElementById("levenshteinResult").textContent = `Damerau-Levenshtein Similarity Score: ${levenshteinScore}`;
             document.getElementById("result").textContent = `Hybrid Similarity Score: ${similarityScore}`;
-            if (similarityScore >= 0.5) {
+            if (similarityScore >= SIMILARITY_THRESHOLD) {
                 document.getElementById("candidate-strength").innerHTML = `<span style="color: #ff9933;">⚠️ Warning: This password is too similar to the current password!</span>`;
             }
         }
@@ -237,8 +301,7 @@
             return 0; 
         }
 
-
-        async function updateStrength(inputId) {
+        async function computeStrength(inputId) {
             let password = document.getElementById(inputId).value;
             let strengthMeter = document.getElementById(inputId + "-strength");
 
@@ -248,7 +311,6 @@
             }
 
             let result = zxcvbnts.core.zxcvbn(password);
-            console.log(result);
             let score = result.score;
             let feedback = result.feedback.suggestions.join(" ") || "Strong password!";
 
@@ -264,6 +326,157 @@
             }
         }
 
+        let firstBreachedPassword = null;
+        async function updateStrength(inputId) {
+            let password = document.getElementById(inputId).value;
+            let strengthMeter = document.getElementById(inputId + "-strength");
+
+            if (password.length < 8) {
+                strengthMeter.innerHTML = "";
+                return;
+            }
+
+            let result = zxcvbnts.core.zxcvbn(password);
+            let score = result.score;
+            let feedback = result.feedback.suggestions.join(" ") || "Strong password!";
+
+            let strengthLevels = ["Very Weak", "Weak", "Fair", "Good", "Strong"];
+            let colors = ["#ff4d4d", "#ff9933", "#ffcc00", "#99cc33", "#33cc33"];
+
+            strengthMeter.innerHTML = `<strong style="color: ${colors[score]};">${strengthLevels[score]}</strong> - ${feedback}`;
+
+            // Check if password is pwned
+            let pwnedCount = await checkHIBP(password);
+            if (pwnedCount > 0) {
+                firstBreachedPassword = password;
+                strengthMeter.innerHTML = `<span style="color: #ff4d4d;">⚠️ This password has been compromised in ${pwnedCount} breaches!</span>`;
+            }
+
+            if (firstBreachedPassword && pwnedCount==0) {
+                let similarity = hybridSimilarity(firstBreachedPassword, password);
+                console.log(`hybrid similarity score: ${similarity.toFixed(4)} (${firstBreachedPassword}, ${password})`)
+                if (similarity >= SIMILARITY_THRESHOLD) {
+                    strengthMeter.innerHTML = `<span style="color: #ff4d4d;">⚠️ Warning: Your password is a modified version of a breached password!</span>`;
+                    return;
+                }
+            }
+        }
+
+        async function validateSignup() {
+            let password = document.getElementById("signup-password").value;
+            let confirmPassword = document.getElementById("signup-confirm-password").value;
+            let message = document.getElementById("signup-message");
+
+            if (password.length < 8 || confirmPassword.length < 8) {
+                message.textContent = " Password should be at least 8 characters.";
+                message.classList.remove('passed');
+                return
+            }
+
+            if (password !== confirmPassword) {
+                message.textContent = " Passwords do not match.";
+                message.classList.remove('passed');
+                return;
+            } else {
+                message.textContent = " Passwords match.";
+                message.classList.add('passed');
+            }
+
+            if (!blocklistLoaded) {
+                message.innerHTML = "⚠️ Blocklist is still loading. Please wait...";
+                return;
+            }
+
+            let allChecksPassed = true;
+            let breaches = await checkHIBP(password);
+            let stuffingCheck = document.getElementById("signup-check-stuffing");
+
+            if (breaches > 0) {
+                stuffingCheck.textContent = `Credential Stuffing Protection: Failed. Password found in ${breaches} breaches`;
+                stuffingCheck.classList.remove('passed');
+                allChecksPassed = false;
+            } else {
+                stuffingCheck.textContent = "Credential Stuffing Protection: Passed";
+                stuffingCheck.classList.add('passed');
+            }
+
+            let result = zxcvbnts.core.zxcvbn(password);
+            let sprayingCheck = document.getElementById("signup-check-spraying");
+            if (password.length <= 8 || result.score <= 2) {
+                sprayingCheck.textContent = `Password Spraying Protection: Failed. ${result.feedback.suggestions.join(" ")} `;
+                sprayingCheck.classList.remove('passed');
+                allChecksPassed = false;
+            } else {
+                sprayingCheck.textContent = "Password Spraying Protection: Passed";
+                sprayingCheck.classList.add('passed');
+
+            }
+
+            let bruteforceCheck = document.getElementById("signup-check-bruteforce");
+            if (password.length < 15 && result.score <= 2) {
+                bruteforceCheck.textContent = `Brute-force Resistance: Failed. ${result.feedback.suggestions.join(" ")} `;
+                bruteforceCheck.classList.remove('passed');
+                allChecksPassed = false;
+            } else {
+                bruteforceCheck.textContent = "Brute-force Resistance: Passed";
+                bruteforceCheck.classList.add('passed');
+
+            }
+
+            blocklistWorker.postMessage({ action: "check", password, threshold: SIMILARITY_THRESHOLD });
+
+            blocklistWorker.onmessage = function (e) {
+                console.log(e);
+                let tweakingCheck = document.getElementById("signup-check-tweaking");
+                if (e.data.exists) {
+                    tweakingCheck.textContent = `Credential Tweaking Protection: Failed. Exact match in tweaked password blocklist`;
+                    allChecksPassed = false;
+                    tweakingCheck.classList.remove('passed');
+                } else if (e.data.similar) {
+                    tweakingCheck.textContent = `Credential Tweaking Protection: Failed. Too similar to ${e.data.closestMatch}`;
+                    allChecksPassed = false;
+                    tweakingCheck.classList.remove('passed');
+                } else {
+                    tweakingCheck.textContent = "Credential Tweaking Protection: Passed";
+                    tweakingCheck.classList.add('passed');
+                }
+
+                if (allChecksPassed) {
+                    message.textContent = `Your password is passed the checklist! ${result.feedback.suggestions.join(" ")}`;
+                    message.classList.add('passed');
+                } else {
+                    message.textContent = "Your password failed one or more security checks!"
+                    message.classList.remove('passed');
+                }
+            };
+
+            console.log(`Resetting firstBreachedPassword: ${firstBreachedPassword}`);
+            firstBreachedPassword = null;
+
+        }
+
+        let blocklistWorker = new Worker("blocklistWorker.js");
+        let blocklistLoaded = false;
+
+        async function loadBlocklists() {
+            const timestamp = new Date().getTime(); // Unique timestamp to bypass cache
+
+            const stuffingResponse = await fetch(`passwords_blocklist?${timestamp}`);
+            const tweakingResponse = await fetch(`password_tweak_blocklist_test?${timestamp}`);
+
+            const stuffingPasswords = (await stuffingResponse.text()).split("\n").map(line => line.trim());
+            const tweakingPasswords = (await tweakingResponse.text()).split("\n").map(line => line.trim());
+
+            blocklistWorker.postMessage({ action: "load", stuffingBlocklist: stuffingPasswords, tweakingBlocklist: tweakingPasswords });
+        }
+
+        blocklistWorker.onmessage = function (e) {
+            if (e.data.status === "loaded") {
+                blocklistLoaded = true;
+                console.log(`Blocklists loaded: Stuffing (${e.data.stuffingSize} passwords), Tweaking (${e.data.tweakingSize} passwords)`);
+            }
+        };
+
         function togglePassword(inputId) {
             let input = document.getElementById(inputId);
             input.type = input.type === "password" ? "text" : "password";
@@ -272,9 +485,11 @@
         function toggleColumns() {
             document.querySelector('table').classList.toggle('show-columns', document.getElementById('toggleColumns').checked);
         }
+
         window.onload = function() {
             addTestCases();
             toggleColumns();
+            loadBlocklists();
         };
 
         (async function () {
