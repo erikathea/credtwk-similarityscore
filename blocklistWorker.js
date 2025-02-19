@@ -74,8 +74,6 @@ self.onmessage = function (e) {
         self.postMessage({ status: "loaded", stuffingSize: stuffingBlocklistSet.size, tweakingSize: tweakingBlocklistSet.size });
     } 
     else if (action === "check") {
-        console.log("Tweaking Blocklist Entries:", [...tweakingBlocklistSet].slice(0, 50));
-        console.log("Checking Password:", password);
         if (stuffingBlocklistSet.has(password)) {
             self.postMessage({ exists: true, similar: false });
             return;
@@ -89,6 +87,17 @@ self.onmessage = function (e) {
 
         let maxSimilarity = 0;
         let closestMatch = null;
+
+        for (let blockPassword of stuffingBlocklistSet) {
+            let score = hybridSimilarity(password, blockPassword);
+            if (score > maxSimilarity) {
+                maxSimilarity = score;
+                closestMatch = blockPassword;
+            }
+            if (maxSimilarity >= threshold) {
+                break;
+            }
+        }
 
         for (let blockPassword of tweakingBlocklistSet) {
             let score = hybridSimilarity(password, blockPassword);

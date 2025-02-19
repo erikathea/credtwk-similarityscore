@@ -426,7 +426,7 @@
             blocklistWorker.postMessage({ action: "check", password, threshold: SIMILARITY_THRESHOLD });
 
             blocklistWorker.onmessage = function (e) {
-                console.log(e);
+                console.log(e.data);
                 let tweakingCheck = document.getElementById("signup-check-tweaking");
                 if (e.data.exists) {
                     tweakingCheck.textContent = `Credential Tweaking Protection: Failed. Exact match in tweaked password blocklist`;
