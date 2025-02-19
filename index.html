@@ -125,12 +125,39 @@
 
     <section id="change-password">
         <h2>Change Password</h2>
-        <label for="current-password">Current Password:</label>
-        <input type="password" id="current-password">
-        <label for="new-password">New Password:</label>
-        <input type="password" id="new-password">
-        <button onclick="validatePasswordChange()">Change Password</button>
-        <p id="change-password-message"></p>
+        <div class="password-container">
+            <label for="change-current-password">Current Password:</label>
+            <input type="password" minlength="8" maxlength="64" id="change-current-password" placeholder="Enter password">
+            <input type="checkbox" id="toggleChangeCurrentPassword" onclick="togglePassword('change-current-password')">
+            <label for="toggleChangeCurrentPassword">Show Password</label>
+        </div>
+        <div class="password-container">
+            <label for="change-new-password">New Password:</label>
+            <input type="password" minlength="8" maxlength="64" id="change-new-password" placeholder="Enter password" oninput="updateStrength('change-new-password')">
+            <input type="checkbox" id="toggleChangeNewPassword" onclick="togglePassword('change-new-password')">
+            <label for="toggleChangeNewPassword">Show Password</label>
+            <div id="change-new-password-strength" class="strength-meter"></div>
+        </div>
+        <div class="password-container">
+            <label for="change-confirm-password">Confirm Password:</label>
+            <input type="password" minlength="8" maxlength="64" id="change-confirm-password" placeholder="Re-enter password" oninput="updateStrength('change-confirm-password')">
+            <input type="checkbox" id="toggleChangeConfirmPassword" onclick="togglePassword('change-confirm-password')">
+            <label for="toggleChangeConfirmPassword">Show Password</label>
+            <div id="change-confirm-password-strength" class="strength-meter"></div>
+        </div>
+
+        <div class="pw-security-checklist">
+            <h3>Change Password Security Checklist</h3>
+            <ul id="create-account-security-checklist">
+                <li id="signup-message">Passwords do not match.</li>
+                <li id="signup-check-stuffing">Credential Stuffing Protection: Not checked</li>
+                <li id="signup-check-tweaking">Credential Tweaking Protection: Not checked</li>
+                <li id="signup-check-spraying">Password Spraying Protection: Not checked</li>
+                <li id="signup-check-bruteforce">Brute-force Resistance: Not checked</li>
+            </ul>
+        </div>
+
+        <button onclick="validateChangePassword()">Change Password</button>
     </section>
 
     <script>
@@ -453,6 +480,10 @@
             console.log(`Resetting firstBreachedPassword: ${firstBreachedPassword}`);
             firstBreachedPassword = null;
 
+        }
+
+        async function validateChangePassword(){
+            
         }
 
         let blocklistWorker = new Worker("blocklistWorker.js");
