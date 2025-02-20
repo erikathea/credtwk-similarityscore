@@ -66,22 +66,27 @@ function hybridSimilarity(str1, str2, w1 = 0.5, w2 = 0.5) {
 }
 
 self.onmessage = function (e) {
-    const { action, password, threshold, stuffingBlocklist, tweakingBlocklist } = e.data;
+    const { action, username, email, password, threshold, stuffingBlocklist, tweakingBlocklist, usernameBlocklist } = e.data;
 
     if (action === "load") {
         stuffingBlocklistSet = new Set(stuffingBlocklist);
         tweakingBlocklistSet = new Set(tweakingBlocklist);
-        self.postMessage({ status: "loaded", stuffingSize: stuffingBlocklistSet.size, tweakingSize: tweakingBlocklistSet.size });
-    } 
+        usernameBlocklistSet = new Set(usernameBlocklist.map(u => u.toLowerCase()));
+        self.postMessage({ status: "loaded", stuffingSize: stuffingBlocklistSet.size, tweakingSize: tweakingBlocklistSet.size, usernameBlocklistSize: usernameBlocklistSet.size });
+    }
     else if (action === "check") {
+        let localPart = email.split("@")[0]; // Extract local part of email
+        let isUsernameBlocked = usernameBlocklistSet.has(username.toLowerCase());
+        let isEmailBlocked = usernameBlocklistSet.has(email.toLowerCase()) || usernameBlocklistSet.has(localPart.toLowerCase());
+
         if (stuffingBlocklistSet.has(password)) {
-            self.postMessage({ exists: true, similar: false });
+            self.postMessage({ exists: true, similar: false, usernameBlocked: isUsernameBlocked, emailBlocked: isEmailBlocked });
             return;
         }
 
         if (tweakingBlocklistSet.has(password)) {
             console.log(`Password Found in Tweaking Blocklist: ${password}`);
-            self.postMessage({ exists: true, similar: false });
+            self.postMessage({ exists: true, similar: false, usernameBlocked: isUsernameBlocked, emailBlocked: isEmailBlocked  });
             return;
         }
 
@@ -110,6 +115,6 @@ self.onmessage = function (e) {
             }
         }
 
-        self.postMessage({ exists: false, similar: maxSimilarity >= threshold, closestMatch, similarity: maxSimilarity });
+        self.postMessage({ exists: false, similar: maxSimilarity >= threshold, closestMatch, similarity: maxSimilarity, usernameBlocked: isUsernameBlocked, emailBlocked: isEmailBlocked });
     }
 };

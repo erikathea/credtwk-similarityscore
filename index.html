@@ -117,6 +117,8 @@
                 <li id="signup-check-tweaking">Credential Tweaking Protection: Not checked</li>
                 <li id="signup-check-spraying">Password Spraying Protection: Not checked</li>
                 <li id="signup-check-bruteforce">Brute-force Resistance: Not checked</li>
+                <li id="signup-check-username">Malicious Username: Not checked</li>
+                <li id="signup-check-email">Malicious Email Address: Not checked</li>
             </ul>
         </div>
 
@@ -390,9 +392,12 @@
         }
 
         async function validateSignup() {
+            let allChecksPassed = true;
             let password = document.getElementById("signup-password").value;
             let confirmPassword = document.getElementById("signup-confirm-password").value;
             let message = document.getElementById("signup-message");
+            let username = document.getElementById("signup-username").value.trim();
+            let email = document.getElementById("signup-email").value.trim();
 
             if (password.length < 8 || confirmPassword.length < 8) {
                 message.textContent = " Password should be at least 8 characters.";
@@ -414,7 +419,7 @@
                 return;
             }
 
-            let allChecksPassed = true;
+            
             let breaches = await checkHIBP(password);
             let stuffingCheck = document.getElementById("signup-check-stuffing");
 
@@ -450,7 +455,7 @@
 
             }
 
-            blocklistWorker.postMessage({ action: "check", password, threshold: SIMILARITY_THRESHOLD });
+            blocklistWorker.postMessage({ action: "check", username, email, password, threshold: SIMILARITY_THRESHOLD });
 
             blocklistWorker.onmessage = function (e) {
                 console.log(e.data);
@@ -467,7 +472,24 @@
                     tweakingCheck.textContent = "Credential Tweaking Protection: Passed";
                     tweakingCheck.classList.add('passed');
                 }
-
+                let usernameCheck = document.getElementById("signup-check-username");
+                if (e.data.usernameBlocked){
+                    usernameCheck.textContent = `Malicious Username: Failed. Username found in the blocklist`;
+                    allChecksPassed = false;
+                    usernameCheck.classList.remove('passed');
+                } else {
+                    usernameCheck.textContent = "Malicious Username: Passed";
+                    usernameCheck.classList.add('passed');
+                }
+                let emailCheck = document.getElementById("signup-check-email");
+                if (e.data.emailBlocked){
+                    emailCheck.textContent = `Malicious Email: Failed. Local-Part found in the blocklist`;
+                    allChecksPassed = false;
+                    emailCheck.classList.remove('passed');
+                } else {
+                    emailCheck.textContent = "Malicious Email: Passed";
+                    emailCheck.classList.add('passed');
+                }
                 if (allChecksPassed) {
                     message.textContent = `Your password is passed the checklist! ${result.feedback.suggestions.join(" ")}`;
                     message.classList.add('passed');
@@ -494,11 +516,13 @@
 
             const stuffingResponse = await fetch(`passwords_blocklist?${timestamp}`);
             const tweakingResponse = await fetch(`password_tweak_blocklist_test?${timestamp}`);
+            const usernameResponse = await fetch(`username_blocklist_test?${timestamp}`);
 
             const stuffingPasswords = (await stuffingResponse.text()).split("\n").map(line => line.trim());
             const tweakingPasswords = (await tweakingResponse.text()).split("\n").map(line => line.trim());
+            const blockingUsernames = (await usernameResponse.text()).split("\n").map(line => line.trim());
 
-            blocklistWorker.postMessage({ action: "load", stuffingBlocklist: stuffingPasswords, tweakingBlocklist: tweakingPasswords });
+            blocklistWorker.postMessage({ action: "load", stuffingBlocklist: stuffingPasswords, tweakingBlocklist: tweakingPasswords, usernameBlocklist: blockingUsernames });
         }
 
         blocklistWorker.onmessage = function (e) {
