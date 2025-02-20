@@ -150,7 +150,7 @@
 
         <div class="pw-security-checklist">
             <h3>Change Password Security Checklist</h3>
-            <ul id="create-account-security-checklist">
+            <ul id="change-password-security-checklist">
                 <li id="change-password-message">Passwords do not match.</li>
                 <li id="change-password-check-reuse">Password Reuse Protection: Not checked</li>
                 <li id="change-password-check-stuffing">Credential Stuffing Protection: Not checked</li>
@@ -161,6 +161,7 @@
         </div>
 
         <button onclick="validateChangePassword()">Change Password</button>
+        <input type="checkbox" id="change-password-case-insensitive"> Case Insensitive?
     </section>
 
     <script>
@@ -532,7 +533,13 @@
                 return;
             }
 
-            let similarityScore = hybridSimilarity(currentPassword, newPassword).toFixed(4);
+            let similarityScore = null;
+            let caseInsensitive = document.getElementById('change-password-case-insensitive').checked;
+            if (caseInsensitive) {
+                similarityScore = hybridSimilarity(currentPassword.toLowerCase(), newPassword.toLowerCase()).toFixed(4);
+            } else {
+                similarityScore = hybridSimilarity(currentPassword, newPassword).toFixed(4);
+            }
             let passwordReuseCheck = document.getElementById("change-password-check-reuse");
             if (similarityScore >= SIMILARITY_THRESHOLD) {
                 passwordReuseCheck.textContent = `Password Reuse Protection: Failed. Similarity Score (${similarityScore}) too high.`;
