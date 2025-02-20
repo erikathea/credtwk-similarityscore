@@ -75,9 +75,17 @@ self.onmessage = function (e) {
         self.postMessage({ status: "loaded", stuffingSize: stuffingBlocklistSet.size, tweakingSize: tweakingBlocklistSet.size, usernameBlocklistSize: usernameBlocklistSet.size });
     }
     else if (action === "check") {
-        let localPart = email.split("@")[0]; // Extract local part of email
-        let isUsernameBlocked = usernameBlocklistSet.has(username.toLowerCase());
-        let isEmailBlocked = usernameBlocklistSet.has(email.toLowerCase()) || usernameBlocklistSet.has(localPart.toLowerCase());
+        let isUsernameBlocked = null;
+        let isEmailBlocked = null;
+
+        if (email) {
+            let localPart = email.split("@")[0];
+            isEmailBlocked = usernameBlocklistSet.has(email.toLowerCase()) || usernameBlocklistSet.has(localPart.toLowerCase());
+        }
+
+        if (username) {
+            isUsernameBlocked = usernameBlocklistSet.has(username.toLowerCase());
+        }
 
         if (stuffingBlocklistSet.has(password)) {
             self.postMessage({ exists: true, similar: false, usernameBlocked: isUsernameBlocked, emailBlocked: isEmailBlocked });

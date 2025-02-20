@@ -151,11 +151,12 @@
         <div class="pw-security-checklist">
             <h3>Change Password Security Checklist</h3>
             <ul id="create-account-security-checklist">
-                <li id="signup-message">Passwords do not match.</li>
-                <li id="signup-check-stuffing">Credential Stuffing Protection: Not checked</li>
-                <li id="signup-check-tweaking">Credential Tweaking Protection: Not checked</li>
-                <li id="signup-check-spraying">Password Spraying Protection: Not checked</li>
-                <li id="signup-check-bruteforce">Brute-force Resistance: Not checked</li>
+                <li id="change-password-message">Passwords do not match.</li>
+                <li id="change-password-check-reuse">Password Reuse Protection: Not checked</li>
+                <li id="change-password-check-stuffing">Credential Stuffing Protection: Not checked</li>
+                <li id="change-password-check-tweaking">Credential Tweaking Protection: Not checked</li>
+                <li id="change-password-check-spraying">Password Spraying Protection: Not checked</li>
+                <li id="change-password-check-bruteforce">Brute-force Resistance: Not checked</li>
             </ul>
         </div>
 
@@ -504,9 +505,105 @@
 
         }
 
-        async function validateChangePassword(){
+        async function validateChangePassword() {
+            let allChecksPassed = true;
+            let currentPassword = document.getElementById("change-current-password").value;
+            let newPassword = document.getElementById("change-new-password").value;
+            let confirmPassword = document.getElementById("change-confirm-password").value;
+            let message = document.getElementById("change-password-message");
 
+            if (newPassword.length < 8 || confirmPassword.length < 8) {
+                message.textContent = " Password should be at least 8 characters.";
+                message.classList.remove('passed');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                message.textContent = " Passwords do not match.";
+                message.classList.remove('passed');
+                return;
+            } else {
+                message.textContent = " Passwords match.";
+                message.classList.add('passed');
+            }
+
+            if (!blocklistLoaded) {
+                message.innerHTML = "⚠️ Blocklist is still loading. Please wait...";
+                return;
+            }
+
+            let similarityScore = hybridSimilarity(currentPassword, newPassword).toFixed(4);
+            let passwordReuseCheck = document.getElementById("change-password-check-reuse");
+            if (similarityScore >= SIMILARITY_THRESHOLD) {
+                passwordReuseCheck.textContent = `Password Reuse Protection: Failed. Similarity Score (${similarityScore}) too high.`;
+                passwordReuseCheck.classList.remove('passed');
+                allChecksPassed = false;
+            } else {
+                passwordReuseCheck.textContent = "Password Reuse Protection: Passed.";
+                passwordReuseCheck.classList.add('passed');
+            }
+
+            let breaches = await checkHIBP(newPassword);
+            let stuffingCheck = document.getElementById("change-password-check-stuffing");
+
+            if (breaches > 0) {
+                stuffingCheck.textContent = `Credential Stuffing Protection: Failed. Password found in ${breaches} breaches`;
+                stuffingCheck.classList.remove('passed');
+                allChecksPassed = false;
+            } else {
+                stuffingCheck.textContent = "Credential Stuffing Protection: Passed";
+                stuffingCheck.classList.add('passed');
+            }
+
+            let result = zxcvbnts.core.zxcvbn(newPassword);
+            let sprayingCheck = document.getElementById("change-password-check-spraying");
+            if (newPassword.length <= 8 || result.score <= 2) {
+                sprayingCheck.textContent = `Password Spraying Protection: Failed. ${result.feedback.suggestions.join(" ")}`;
+                sprayingCheck.classList.remove('passed');
+                allChecksPassed = false;
+            } else {
+                sprayingCheck.textContent = "Password Spraying Protection: Passed";
+                sprayingCheck.classList.add('passed');
+            }
+
+            let bruteforceCheck = document.getElementById("change-password-check-bruteforce");
+            if (newPassword.length < 15 && result.score <= 2) {
+                bruteforceCheck.textContent = `Brute-force Resistance: Failed. Consider making your password longer.`;
+                bruteforceCheck.classList.remove('passed');
+                allChecksPassed = false;
+            } else {
+                bruteforceCheck.textContent = "Brute-force Resistance: Passed";
+                bruteforceCheck.classList.add('passed');
+            }
+
+            blocklistWorker.postMessage({ action: "check", password: newPassword, threshold: SIMILARITY_THRESHOLD });
+
+            blocklistWorker.onmessage = function (e) {
+                console.log(e.data);
+                let tweakingCheck = document.getElementById("change-password-check-tweaking");
+                if (e.data.exists) {
+                    tweakingCheck.textContent = `Credential Tweaking Protection: Failed. Exact match in tweaked password blocklist`;
+                    allChecksPassed = false;
+                    tweakingCheck.classList.remove('passed');
+                } else if (e.data.similar) {
+                    tweakingCheck.textContent = `Credential Tweaking Protection: Failed. Too similar to ${e.data.closestMatch}`;
+                    allChecksPassed = false;
+                    tweakingCheck.classList.remove('passed');
+                } else {
+                    tweakingCheck.textContent = "Credential Tweaking Protection: Passed";
+                    tweakingCheck.classList.add('passed');
+                }
+
+                if (allChecksPassed) {
+                    message.textContent = `Your new password has passed the security checklist! ${result.feedback.suggestions.join(" ")}`;
+                    message.classList.add('passed');
+                } else {
+                    message.textContent = "Your new password failed one or more security checks!";
+                    message.classList.remove('passed');
+                }
+            };
         }
+
 
         let blocklistWorker = new Worker("blocklistWorker.js");
         let blocklistLoaded = false;
@@ -515,7 +612,7 @@
             const timestamp = new Date().getTime(); // Unique timestamp to bypass cache
 
             const stuffingResponse = await fetch(`passwords_blocklist?${timestamp}`);
-            const tweakingResponse = await fetch(`password_tweak_blocklist_test?${timestamp}`);
+            const tweakingResponse = await fetch(`password_tweaks_blocklist?${timestamp}`);
             const usernameResponse = await fetch(`username_blocklist_test?${timestamp}`);
 
             const stuffingPasswords = (await stuffingResponse.text()).split("\n").map(line => line.trim());
