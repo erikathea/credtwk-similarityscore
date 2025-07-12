@@ -1,0 +1,251 @@
+country,count
+"Afghanistan", 397
+"Albania", 832
+"Algeria", 874
+"American Samoa", 2285
+"Andorra", 536
+"Angola", 853
+"Anguilla", 255
+"Antarctica", 41
+"Antigua and Barbuda", 694
+"Argentina", 37448
+"Armenia", 1641
+"Aruba", 170
+"Ascension Island", 990
+"Australia", 182004
+"Austria", 58981
+"Azerbaijan", 2222
+"Bahamas", 167
+"Bahrain", 897
+"Bangladesh", 950
+"Barbados", 322
+"Belarus", 8266
+"Belgium", 45467
+"Belize", 1558
+"Benin", 99
+"Bermuda", 801
+"Bhutan", 231
+"Bolivia (Plurinational State of)", 1453
+"Bosnia and Herzegovina", 2085
+"Botswana", 1148
+"Bouvet Island", 54
+"Brazil", 166325
+"British Indian Ocean Territory", 685
+"Brunei Darussalam", 350
+"Bulgaria", 5454
+"Burkina Faso", 228
+"Burundi", 158
+"Cabo Verde", 525
+"Cambodia", 790
+"Cameroon", 3860
+"Canada", 97391
+"Cayman Islands", 563
+"Central African Republic", 671
+"Chad", 26
+"Chile", 29940
+"China", 53693
+"Christmas Island", 1524
+"Cocos (Keeling) Islands", 23055
+"Colombia", 36643
+"Comoros", 75
+"Congo", 88
+"Congo (the Democratic Republic of the)", 483
+"Cook Islands", 234
+"Costa Rica", 2068
+"Croatia", 6568
+"Cuba", 3229
+"Curaçao", 53
+"Cyprus", 1562
+"Czechia", 59069
+"Côte d'Ivoire", 928
+"Denmark", 66215
+"Djibouti", 329
+"Dominica", 81
+"Dominican Republic", 1493
+"Ecuador", 3519
+"Egypt", 2482
+"El Salvador", 2235
+"Equatorial Guinea", 400
+"Eritrea", 777
+"Estonia", 8293
+"Eswatini", 389
+"Ethiopia", 924
+"European Union", 44216
+"Falkland Islands (Malvinas)", 97
+"Faroe Islands", 624
+"Fiji", 1153
+"Finland", 21562
+"France", 127987
+"French Guiana", 265
+"French Polynesia", 365
+"French Southern Territories", 233
+"Gabon", 638
+"Gambia", 172
+"Georgia", 1904
+"Germany", 341974
+"Ghana", 1037
+"Gibraltar", 304
+"Global", 7171484
+"Greece", 17935
+"Greenland", 383
+"Grenada", 151
+"Guadeloupe", 58
+"Guam", 96
+"Guatemala", 1979
+"Guernsey", 599
+"Guinea", 37
+"Guinea-Bissau", 19
+"Guyana", 89
+"Haiti", 251
+"Heard Island and McDonald Islands", 103
+"Holy See", 192
+"Honduras", 582
+"Hong Kong", 14945
+"Hungary", 34448
+"Iceland", 5256
+"India", 82329
+"Indonesia", 18990
+"Iran (Islamic Republic of)", 3188
+"Iraq", 51
+"Ireland", 21361
+"Isle of Man", 965
+"Israel", 16563
+"Italy", 217980
+"Jamaica", 532
+"Japan", 162035
+"Jersey", 445
+"Jordan", 2169
+"Kazakhstan", 6386
+"Kenya", 3407
+"Kiribati", 158
+"Korea (Democratic People's Republic of)", 81
+"Korea (Republic of)", 21985
+"Kuwait", 877
+"Kyrgyzstan", 701
+"Lao People's Democratic Republic", 1760
+"Latvia", 10177
+"Lebanon", 1153
+"Lesotho", 256
+"Liberia", 129
+"Libya", 412
+"Liechtenstein", 1339
+"Lithuania", 12365
+"Luxembourg", 4055
+"Macao", 455
+"Madagascar", 630
+"Malawi", 297
+"Malaysia", 19506
+"Maldives", 487
+"Mali", 952
+"Malta", 1169
+"Marshall Islands", 9
+"Martinique", 20
+"Mauritania", 144
+"Mauritius", 1356
+"Mayotte", 143
+"Mexico", 53116
+"Micronesia (Federated States of)", 2042
+"Moldova (Republic of)", 2154
+"Monaco", 456
+"Mongolia", 607
+"Montenegro", 6946
+"Montserrat", 1121
+"Morocco", 4061
+"Mozambique", 1736
+"Myanmar", 346
+"Namibia", 1553
+"Nauru", 128
+"Nepal", 1576
+"Netherlands", 124467
+"New Caledonia", 491
+"New Zealand", 37663
+"Nicaragua", 970
+"Niger", 3157
+"Nigeria", 1048
+"Niue", 8228
+"Norfolk Island", 223
+"North Macedonia", 1797
+"Northern Mariana Islands", 96
+"Norway", 40741
+"Oman", 4704
+"Pakistan", 7458
+"Palau", 1162
+"Palestine State of", 481
+"Panama", 907
+"Papua New Guinea", 977
+"Paraguay", 1895
+"Peru", 7141
+"Philippines", 7945
+"Pitcairn", 409
+"Poland", 103376
+"Portugal", 28419
+"Puerto Rico", 407
+"Qatar", 1197
+"Romania", 38838
+"Russian Federation", 406100
+"Rwanda", 340
+"Réunion", 1144
+"Saint Helena Ascension and Tristan da Cunha", 349
+"Saint Kitts and Nevis", 64
+"Saint Lucia", 94
+"Saint Pierre and Miquelon", 102
+"Saint Vincent and the Grenadines", 243
+"Samoa", 7385
+"San Marino", 300
+"Sao Tome and Principe", 976
+"Saudi Arabia", 5799
+"Senegal", 842
+"Serbia", 5559
+"Seychelles", 465
+"Sierra Leone", 129
+"Singapore", 15528
+"Sint Maarten (Dutch part)", 30
+"Slovakia", 23742
+"Slovenia", 5385
+"Solomon Islands", 119
+"Somalia", 763
+"South Africa", 93530
+"South Georgia and the South Sandwich Islands", 325
+"South Sudan", 400
+"Soviet Union", 5916
+"Spain", 66796
+"Sri Lanka", 3504
+"Sudan", 797
+"Suriname", 225
+"Svalbard and Jan Mayen", 57
+"Sweden", 71241
+"Switzerland", 60001
+"Syrian Arab Republic", 249
+"Taiwan", 30584
+"Tajikistan", 219
+"Tanzania United Republic of", 892
+"Thailand", 15134
+"Timor-Leste", 136
+"Togo", 162
+"Tokelau", 19302
+"Tonga", 2676
+"Trinidad and Tobago", 789
+"Tunisia", 2629
+"Turkmenistan", 235
+"Turks and Caicos Islands", 986
+"Tuvalu", 14380
+"Türkiye", 26612
+"Uganda", 1477
+"Ukraine", 68166
+"United Arab Emirates", 10875
+"United Kingdom", 583290
+"United States Minor Outlying Islands", 68
+"United States of America", 92244
+"Uruguay", 3248
+"Uzbekistan", 1340
+"Vanuatu", 699
+"Venezuela (Bolivarian Republic of)", 3296
+"Viet Nam", 5981
+"Virgin Islands (British)", 325
+"Virgin Islands (U.S.)", 123
+"Wallis and Futuna", 29
+"Western Sahara", 25
+"Yemen", 153
+"Zambia", 851
+"Zimbabwe", 3054
+"Åland Islands", 92
