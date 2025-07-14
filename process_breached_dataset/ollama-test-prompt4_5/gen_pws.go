@@ -231,7 +231,13 @@ func main() {
     var outputRows [][]string
     headerWritten := false
     autoSaveThreshold := 5
-    fixedInstructions := " The result must be different from the provided password/s. List each password on a new line with no extra text, numbering, or formatting. Do not include any internal reasoning or chain-of-thought. Output only the results.<｜Assistant｜>"
+    fixedInstructions := " The result must be different from the provided password/s. List each password on a new line with no extra text, numbering, or formatting. Do not include any internal reasoning or chain-of-thought. Output only the results."
+    start_token := "<｜User｜>"
+    end_token := "<｜Assistant｜>"
+    if *modelName == "magistral" {
+        start_token = "[INST]"
+        end_token = "[/INST]"
+    }
 
     for i, record := range records[1:] {
         if len(record) <= pw1Index {
@@ -245,19 +251,21 @@ func main() {
         var prompt string
         switch *promptTemplate {
         case 1:
-            prompt = fmt.Sprintf(`<｜User｜>Please create %d unique password variant/s using the word: "%s".`, *numVariants, pw1)
+            prompt = fmt.Sprintf(`Please create %d unique password variant/s using the word: "%s".`, *numVariants, pw1)
         case 2:
-            prompt = fmt.Sprintf(`<｜User｜>Please create %d unique password variant/s using the words: "%s" and "%s".`, *numVariants, pw1, pw2)
+            prompt = fmt.Sprintf(`Please create %d unique password variant/s using the words: "%s" and "%s".`, *numVariants, pw1, pw2)
         case 3:
-            prompt = fmt.Sprintf(`<｜User｜>Please create %d unique password/s. My current password is: "%s". The provided password is breached.`, *numVariants, pw1)
+            prompt = fmt.Sprintf(`Please create %d unique password/s. My current password is: "%s". The provided password is breached.`, *numVariants, pw1)
         case 4:
-            prompt = fmt.Sprintf(`<｜User｜>Please create %d unique password/s. My current passwords are: "%s", "%s".The provided passwords are breached.`, *numVariants, pw1, pw2)
+            prompt = fmt.Sprintf(`Please create %d unique password/s. My current passwords are: "%s", "%s".The provided passwords are breached.`, *numVariants, pw1, pw2)
         case 5:
-            prompt = fmt.Sprintf(`<｜User｜>Please create %d unique password variant/s for username "%s" using the words: "%s" and "%s".`, *numVariants, username, pw1, pw2)
+            prompt = fmt.Sprintf(`Please create %d unique password variant/s for username "%s" using the words: "%s" and "%s".`, *numVariants, username, pw1, pw2)
         case 6:
-            prompt = fmt.Sprintf(`<｜User｜>Please create %d unique password/s. My current username is "%s" and my passwords are: "%s", "%s".The provided passwords are breached.`, *numVariants, username, pw1, pw2)
+            prompt = fmt.Sprintf(`Please create %d unique password/s. My current username is "%s" and my passwords are: "%s", "%s".The provided passwords are breached.`, *numVariants, username, pw1, pw2)
         }
-        prompt += fixedInstructions
+        prompt += start_token
+        prompt += fixedInstructions 
+        prompt += end_token
 
         reqPayload := GenerateRequest{
             Model:  *modelName,
