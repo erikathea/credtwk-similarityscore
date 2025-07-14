@@ -26,11 +26,11 @@ def is_noise(text):
         "modify", "modifie", "generate", "create", "substitute", "transform", "convert", "try", "implement", "include", "generate",
         "implement", "include", "incorporate", "integrate", "suggest", "recommend", "apply", "ensure", "capitalize", "uppercase",
         "lowercase", "switch", "shift", "scramble", "shuffle", "convert", "order", "reorder", "randomize", "result",
-        "alternate", "hash", "salt", "take", "multipy", "substract", "divide", "break", "position", "avoid",
+        "alternate", "hash", "salt", "take", "multipy", "substract", "divide", "break", "position", "avoid", "reversal",
         "assign", "output", "level", "wait", "move", "addition", "combination", "become", "becomes", "identify", "identifies", "finalize",
-        "double", "alter", "alteration", "start", "trim", "to meet", "increase", "increment", "decrease", "decrement",
-        "substitute", "substitution", "addition", "multiplication", "multiplies", "multiplied",
-        "permute", "permutation", "combine", "combination"
+        "double", "alter", "alteration", "start", "trim", "to meet", "increase", "increment", "decrease", "decrement", "import"
+        "substitute", "substitution", "addition", "multiplication", "multiplies", "multiplied", "define", "equation", "compute",
+        "permute", "permutation", "combine", "combination", "calculate", "calculation", "difference", "return", "enforce", "extract", "reframe"
     ]
     
     verb_patterns = []
@@ -75,12 +75,21 @@ def is_noise(text):
         r'\byou\s+can\b', # "You can" suggestions
         r'\bhere\s+is\b', # "Here is" introductions
         r'\bhere\s+are\b', # "Here are" introductions
+        r'\bthey\s+are\b',
+        r'\bbelow\s+is\b',
+        r'\bbelow\s+are\b',
+        r'\bwhen\s+you\b',
         r'\bto\s+make\b', # Explanations of how "to make" something
         r'\bstep\s+by\b',
         r'\bstep-by-step\b',
         r'\bfirst\s+part\b',
         r'\bsecond\s+part\b',
         r'\bthird\s+part\b',
+        r'\bdisplay\s+text\b',
+        r'\bedge\s+case\b',
+        r'\bedge\s+cases\b',
+        r'\bpossible\s+approaches\b',
+        r'\bpossible\s+approach\b',
         r'\bexplanation\b',
         r'\bexample\b',
         r'\bnote\b',     # Notes or explanations
@@ -92,6 +101,7 @@ def is_noise(text):
         r'\binstead\b',
         r'\banother\b', 
         r'\balternatively\b', 
+        r'\badditional\b', 
         r'\boption\b', 
         r'\boptional\b', 
         r'\boptionally\b',
@@ -111,9 +121,17 @@ def is_noise(text):
         r'\bspecial\b',
         r'\bnumber\b',
         r'\bcharacter\b',
+        r'\bdigit\:\b',
+        r'\bindex\:\b',
+        r'\bstring\b',
         r'\bpbkdf2_hmac\b', # Discussing cryptography
         r'\bbcrypt\b',
-        r'\bscrypt\b'
+        r'\bscrypt\b',
+        r'\bdocumentation\b',
+        r'\bpassword_chars\b',
+        r'\bpassword_char\b',
+        r'\bdatetime\b',
+        r'\benv python3\b'
     ]
     
     all_patterns = verb_patterns + explanation_patterns
@@ -229,5 +247,9 @@ def clean_csv_file(input_file, output_clean_file, noise_output_file):
 
 
 # Process the input files.
-clean_csv_file("output-test-prompt2-8b.csv", "output-cleaned-prompt2-8b.csv", "output-noise-prompt2-8b.csv")
-clean_csv_file("output-test-prompt2-14b.csv", "output-cleaned-prompt2-14b.csv", "output-noise-prompt2-14b.csv")
+#clean_csv_file("output-test-prompt2-8b.csv", "output-cleaned-prompt2-8b.csv", "output-noise-prompt2-8b.csv")
+#clean_csv_file("output-test-prompt2-14b.csv", "output-cleaned-prompt2-14b.csv", "output-noise-prompt2-14b.csv")
+clean_csv_file("output-psm-prompt2-phi4-reasoning.csv", "output-cleaned-prompt2-phi4.csv", "output-noise-prompt2-phi4.csv")
+clean_csv_file("output-psm-prompt2-qwen3-1.7b.csv", "output-cleaned-prompt2-qwen3-1.7b.csv", "output-noise-prompt2-qwen3-1.7b.csv")
+clean_csv_file("output-psm-prompt2-qwen3-8b.csv", "output-cleaned-prompt2-qwen3-8b.csv", "output-noise-prompt2-qwen3-8b.csv")
+clean_csv_file("output-psm-prompt2-qwen3-14b.csv", "output-cleaned-prompt2-qwen3-14b.csv", "output-noise-prompt2-qwen3-14b.csv")

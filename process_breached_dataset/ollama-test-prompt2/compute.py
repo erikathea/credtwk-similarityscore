@@ -104,5 +104,9 @@ def compute_averages(input_file, output_file):
     out_df.to_csv(output_file, index=False)
     print(f"Saved computed averages to {output_file}")
 
-compute_averages("output-cleaned-prompt2-8b.csv", "output-computed-prompt2-8b.csv")
-compute_averages("output-cleaned-prompt2-14b.csv", "output-computed-prompt2-14b.csv")
+#compute_averages("output-cleaned-prompt2-8b.csv", "output-computed-prompt2-8b.csv")
+#compute_averages("output-cleaned-prompt2-14b.csv", "output-computed-prompt2-14b.csv")
+compute_averages("output-cleaned-prompt2-phi4.csv", "output-computed-prompt2-phi4.csv")
+compute_averages("output-cleaned-prompt2-qwen3-1.7b.csv", "output-computed-prompt2-qwen3-1.7b.csv")
+compute_averages("output-cleaned-prompt2-qwen3-8b.csv", "output-computed-prompt2-qwen3-8b.csv")
+compute_averages("output-cleaned-prompt2-qwen3-14b.csv", "output-computed-prompt2-qwen3-14b.csv")

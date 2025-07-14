@@ -4,13 +4,18 @@ from plotly.subplots import make_subplots
 
 # Example CSV mapping with defined order
 files = {
-    "Qwen-1.5B": "output-computed-prompt2-1.5b.csv",
-    "Llama-8B": "output-computed-prompt2-8b.csv",
-    "Qwen-14B": "output-computed-prompt2-14b.csv"
+    "DeepSeek-R1-Qwen-1.5B": "output-computed-prompt2-1.5b.csv",
+    "DeepSeek-R1-Llama-8B": "output-computed-prompt2-8b.csv",
+    "DeepSeek-R1-Qwen-14B": "output-computed-prompt2-14b.csv",
+    "Qwen3-1.7B": "output-computed-prompt2-qwen3-1.7b.csv",
+    "Qwen3-8B": "output-computed-prompt2-qwen3-8b.csv",
+    "Qwen3-14B": "output-computed-prompt2-qwen3-14b.csv",
+    "Phi4-Reasoning-14B": "output-computed-prompt2-phi4.csv",
 }
 
 # Define the specific order for the models
-model_order = ["Qwen-1.5B", "Llama-8B", "Qwen-14B"]
+model_order = ["DeepSeek-R1-Qwen-1.5B", "DeepSeek-R1-Llama-8B", "DeepSeek-R1-Qwen-14B",
+"Qwen3-1.7B", "Qwen3-8B", "Qwen3-14B", "Phi4-Reasoning-14B"]
 
 # Define bins and labels for HSS score ranges
 bins = [-1e-9, 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5,
