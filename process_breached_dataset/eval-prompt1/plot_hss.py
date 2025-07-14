@@ -117,32 +117,37 @@ def frange(start, stop, step):
         yield round(start, 10)
         start += step
 
-def export_false_negative_rate_csv(hist_data, output_filename="fnr_prompt1.csv"):
+def export_tpr_fnr_csv(hist_data, output_filename="tpr_fnr_prompt1.csv"):
     thresholds = [round(x, 2) for x in list(frange(0.1, 0.96, 0.05))]
     data = []
 
     for model, counts in hist_data.items():
-        total = sum(counts["cs"].values)
-        row = {"model": model}
-        for t in thresholds:
-            fn_count = 0
-            for label, count in counts["cs"].items():
-                try:
-                    upper_bound = float(label.split("-")[-1])
-                    if upper_bound < t:
-                        fn_count += count
-                except ValueError:
-                    continue
-            fnr = (fn_count / total) * 100 if total > 0 else 0
-            row[f"{t:.2f}"] = round(fnr, 2)
-        data.append(row)
+        for mode in ["cs", "ci"]:
+            total = sum(counts[mode].values)
+            row = {"model": f"{model} ({'CS' if mode == 'cs' else 'CI'})"}
+            for t in thresholds:
+                fn_count = 0
+                for label, count in counts[mode].items():
+                    try:
+                        upper_bound = float(label.split("-")[-1])
+                        if upper_bound < t:
+                            fn_count += count
+                    except ValueError:
+                        continue
+                tp_count = total - fn_count
+                fnr = (fn_count / total) * 100 if total > 0 else 0
+                tpr = (tp_count / total) * 100 if total > 0 else 0
+                row[f"TPR@{t:.2f}"] = round(tpr, 2)
+                row[f"FNR@{t:.2f}"] = round(fnr, 2)
+            data.append(row)
 
     df = pd.DataFrame(data)
     df.to_csv(output_filename, index=False)
-    print(f"✅ CSV for FNR saved as: {output_filename}")
+    print(f"✅ TPR & FNR CSV saved as: {output_filename}")
 
-# Generate and export FNR CSV
-export_false_negative_rate_csv(hist_data)
+# Generate and export TPR-FNR CSV
+export_tpr_fnr_csv(hist_data)
+
 
 # Show plot
 fig.show()
