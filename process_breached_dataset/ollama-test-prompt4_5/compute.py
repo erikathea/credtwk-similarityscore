@@ -94,8 +94,12 @@ def compute_averages(input_file, output_file):
     out_df.to_csv(output_file, index=False)
     print(f"Saved computed averages to {output_file}")
 # prompt2 - Test Case: Prompt 4
-compute_averages("output-cleaned-prompt2-deepseek.csv", "output-computed-prompt2-deepseek.csv")
-compute_averages("output-cleaned-prompt2-qwq.csv", "output-computed-prompt2-qwq.csv")
+#compute_averages("output-cleaned-prompt2-deepseek.csv", "output-computed-prompt2-deepseek.csv")
+#compute_averages("output-cleaned-prompt2-qwq.csv", "output-computed-prompt2-qwq.csv")
+#compute_averages("output-cleaned-prompt2-qwen3.csv", "output-computed-prompt2-qwen3.csv")
+#compute_averages("output-cleaned-prompt2-magistral.csv", "output-computed-prompt2-magistral.csv")
 # prompt4 - Test Case: Prompt 5
 #compute_averages("output-cleaned-prompt4-deepseek.csv", "output-computed-prompt4-deepseek.csv")
 #compute_averages("output-cleaned-prompt4-qwq.csv", "output-computed-prompt4-qwq.csv")
+compute_averages("output-cleaned-prompt4-qwen3.csv", "output-computed-prompt4-qwen3.csv")
+compute_averages("output-cleaned-prompt4-magistral.csv", "output-computed-prompt4-magistral.csv")

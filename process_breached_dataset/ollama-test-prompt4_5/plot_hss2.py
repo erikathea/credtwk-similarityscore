@@ -3,13 +3,22 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 # Example CSV mapping with defined order
+#files = {
+#    "Deepseek-R1-32B": "output-computed-prompt2-deepseek.csv",
+#    "Qwen-QwQ-32B": "output-computed-prompt2-qwq.csv",
+#    "Qwen3-32B": "output-computed-prompt2-qwen3.csv",
+#    "Magistral-24B": "output-computed-prompt2-magistral.csv"
+#}
+
 files = {
-    "Qwen-QwQ-32B": "output-computed-prompt2-qwq.csv",
-    "Deepseek-R1-32B": "output-computed-prompt2-deepseek.csv",
+    "Deepseek-R1-32B": "output-computed-prompt4-deepseek.csv",
+    "Qwen-QwQ-32B": "output-computed-prompt4-qwq.csv",
+    "Qwen3-32B": "output-computed-prompt4-qwen3.csv",
+    "Magistral-24B": "output-computed-prompt4-magistral.csv"
 }
 
 # Define the specific order for the models
-model_order = ["Qwen-QwQ-32B", "Deepseek-R1-32B"]
+model_order = list(files.keys())
 
 # Define bins and labels for HSS score ranges
 bins = [-1e-9, 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5,
@@ -191,7 +200,8 @@ for i in range(1, len(model_data) + 1):
 # Update overall layout
 fig.update_layout(
     title={
-        'text': '<b>Hybrid Similarity Score (HSS) Distribution for Test Case: Prompt 4</b>',
+        #'text': '<b>Hybrid Similarity Score (HSS) Distribution for Test Case 4 - Prompt 4 (Prompt 2)</b>',
+        'text': '<b>Hybrid Similarity Score (HSS) Distribution for Test Case 5 - Prompt 5 (Prompt 4)</b>',
         'y': 0.98,
         'x': 0.5,
         'xanchor': 'center',
@@ -231,3 +241,37 @@ fig.add_annotation(
 )
 
 fig.show()
+
+def export_tpr_fnr_csv(model_data, labels_bin, output_filename="tpr_fnr_prompt.csv"):
+    import numpy as np
+
+    thresholds = np.round(np.arange(0.1, 0.96, 0.05), 2)
+    data = []
+
+    for model, counts in model_data.items():
+        for key in ["cs_pw1", "ci_pw1", "cs_pw2", "ci_pw2"]:
+            label = f"{model} ({key.upper()})"
+            total = sum(counts[key])
+            row = {"model": label}
+            for t in thresholds:
+                fn_count = 0
+                for i, bin_label in enumerate(labels_bin):
+                    try:
+                        upper = float(bin_label.split("-")[-1])
+                        if upper < t:
+                            fn_count += counts[key][i]
+                    except ValueError:
+                        continue
+                tp_count = total - fn_count
+                fnr = (fn_count / total) * 100 if total > 0 else 0
+                tpr = (tp_count / total) * 100 if total > 0 else 0
+                row[f"TPR@{t:.2f}"] = round(tpr, 2)
+                row[f"FNR@{t:.2f}"] = round(fnr, 2)
+            data.append(row)
+
+    df = pd.DataFrame(data)
+    df.to_csv(output_filename, index=False)
+    print(f"✅ TPR & FNR CSV saved as: {output_filename}")
+
+#export_tpr_fnr_csv(model_data, labels_bin, "tpr_fnr_prompt2-testcase4.csv")
+export_tpr_fnr_csv(model_data, labels_bin, "tpr_fnr_prompt4-testcase5.csv")

@@ -222,8 +222,8 @@ func main() {
         outputHeader = append(outputHeader, fmt.Sprintf("ci_hss_pw1_%d", i))
         outputHeader = append(outputHeader, fmt.Sprintf("cs_hss_pw2_%d", i))
         outputHeader = append(outputHeader, fmt.Sprintf("ci_hss_pw2_%d", i))
-        outputHeader = append(outputHeader, fmt.Sprintf("cs_hss_user_%d", i))
-        outputHeader = append(outputHeader, fmt.Sprintf("ci_hss_user_%d", i))
+        //outputHeader = append(outputHeader, fmt.Sprintf("cs_hss_user_%d", i))
+        //outputHeader = append(outputHeader, fmt.Sprintf("ci_hss_user_%d", i))
     }
     outputHeader = append(outputHeader, "total_duration", "load_duration", "prompt_eval_count",
     "prompt_eval_duration", "eval_count", "eval_duration")

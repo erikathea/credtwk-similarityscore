@@ -2,6 +2,8 @@
 ## build script
 go build gen_pws.go
 
+### Note: The Go script is buggy. Need to remove extra headers
+
 ====
 
 ## prompt 2
@@ -12,6 +14,18 @@ go build gen_pws.go
 
 ./gen_pws -model="qwen3:32b" -csv="../cleaned_r/password_pairs_1.csv" -output="output-psm-prompt2-qwen3.csv" -prompt=2 -variants=25
 
+./gen_pws -model="qwen3:32b" -csv="../cleaned_r/password_pairs_5.csv" -output="output-psm-prompt2-qwen3.csv" -prompt=2 -variants=25
+
+##### vast.ai jupyter terminal
+./gen_pws -model="magistral" -csv="../cleaned_s-group1/password_pairs_1.csv" -output="output-psm-prompt2-magistral.csv" -prompt=2 -variants=25
+
+./gen_pws -model="qwen3:32b" -csv="../cleaned_s-group1/password_pairs_1.csv" -output="output-psm-prompt2-qwen3.csv" -prompt=2 -variants=25
+
+./gen_pws -model="magistral" -csv="../cleaned_s-group1/password_pairs_1.csv" -output="output-psm-prompt4-magistral.csv" -prompt=4 -variants=25
+
+./gen_pws -model="qwen3:32b" -csv="../cleaned_s-group1/password_pairs_1.csv" -output="output-psm-prompt4-qwen3.csv" -prompt=4 -variants=25
+#####
+
 ====
 
 ## prompt 4
@@ -20,7 +34,11 @@ go build gen_pws.go
 
 ./gen_pws -model="deepseek-r1:32b" -csv="../cleaned_q/password_pairs_1.csv" -output="output-psm-prompt4-deepseek.csv" -prompt=4 -variants=25
 
+./gen_pws -model="qwen3:32b" -csv="../cleaned_r/password_pairs_1.csv" -output="output-psm-prompt4-qwen3.csv" -prompt=4 -variants=25
+
 =====
+
+### Note: Remove cs_hss_user_,ci_hss_user_ columns from the Go script/csv header.
 
 ## cleaning (python3 clean.py)
 - clean_csv_file("output-psm-prompt2-deepseek.csv", "output-cleaned-psm-prompt2-deepseek.csv", "output-noise-prompt3-8b.csv")
