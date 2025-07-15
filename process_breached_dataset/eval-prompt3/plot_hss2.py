@@ -1,16 +1,22 @@
 import pandas as pd
+import numpy as np
+from math import ceil
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 # Example CSV mapping with defined order
 files = {
-    "Qwen-1.5B": "output-computed-prompt3-1.5b.csv",
-    "Llama-8B": "output-computed-prompt3-8b.csv",
-    "Qwen-14B": "output-computed-prompt3-14b.csv"
+    "DeepSeek-R1-Qwen-1.5B": "output-computed-prompt3-1.5b.csv",
+    "DeepSeek-R1-Llama-8B": "output-computed-prompt3-8b.csv",
+    "DeepSeek-R1-Qwen-14B": "output-computed-prompt3-14b.csv",
+    "Qwen3-1.7B": "output-computed-prompt3-qwen3-1.7b.csv",
+    "Qwen3-8B": "output-computed-prompt3-qwen3-8b.csv",
+    "Qwen3-14B": "output-computed-prompt3-qwen3-14b.csv",
+    "Phi4-Reasoning-14B": "output-computed-prompt3-phi4.csv",
 }
 
 # Define the specific order for the models
-model_order = ["Qwen-1.5B", "Llama-8B", "Qwen-14B"]
+model_order = list(files.keys())
 
 # Define bins and labels for HSS score ranges
 bins = [-1e-9, 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5,
@@ -246,3 +252,70 @@ fig.add_annotation(
 )
 
 fig.show()
+
+def export_tpr_fnr_csv(model_data, labels_bin, output_filename="tpr_fnr_prompt3.csv"):
+
+    thresholds = np.round(np.arange(0.1, 0.96, 0.05), 2)
+    data = []
+
+    for model, counts in model_data.items():
+        for key in ["cs_pw1", "ci_pw1", "cs_pw2", "ci_pw2"]:
+            label = f"{model} ({key.upper()})"
+            total = sum(counts[key])
+            row = {"model": label}
+            for t in thresholds:
+                fn_count = 0
+                for i, bin_label in enumerate(labels_bin):
+                    try:
+                        upper = float(bin_label.split("-")[-1])
+                        if upper < t:
+                            fn_count += counts[key][i]
+                    except ValueError:
+                        continue
+                tp_count = total - fn_count
+                fnr = (fn_count / total) * 100 if total > 0 else 0
+                tpr = (tp_count / total) * 100 if total > 0 else 0
+                row[f"TPR@{t:.2f}"] = round(tpr, 2)
+                row[f"FNR@{t:.2f}"] = round(fnr, 2)
+            data.append(row)
+
+    df = pd.DataFrame(data)
+    df.to_csv(output_filename, index=False)
+    print(f"✅ TPR & FNR CSV saved as: {output_filename}")
+
+def export_hss_user_tpr_fnr(model_data, labels_bin, output_filename="tpr_fnr_prompt3_hssuser.csv"):
+    import numpy as np
+    import pandas as pd
+
+    thresholds = np.round(np.arange(0.1, 0.96, 0.05), 2)
+    data = []
+    user_keys = ["cs_user", "ci_user"]
+
+    for model, counts in model_data.items():
+        for key in user_keys:
+            label = f"{model} ({key.upper()})"
+            total = sum(counts[key])
+            row = {"model": label}
+            for t in thresholds:
+                fn_count = 0
+                for i, bin_label in enumerate(labels_bin):
+                    try:
+                        upper = float(bin_label.split("-")[-1])
+                        if upper < t:
+                            fn_count += counts[key][i]
+                    except ValueError:
+                        continue
+                tp_count = total - fn_count
+                fnr = (fn_count / total) * 100 if total > 0 else 0
+                tpr = (tp_count / total) * 100 if total > 0 else 0
+                row[f"TPR@{t:.2f}"] = round(tpr, 2)
+                row[f"FNR@{t:.2f}"] = round(fnr, 2)
+            data.append(row)
+
+    df = pd.DataFrame(data)
+    df.to_csv(output_filename, index=False)
+    print(f"✅ HSSuser TPR & FNR saved to: {output_filename}")
+
+export_tpr_fnr_csv(model_data, labels_bin)
+export_hss_user_tpr_fnr(model_data, labels_bin)
+
